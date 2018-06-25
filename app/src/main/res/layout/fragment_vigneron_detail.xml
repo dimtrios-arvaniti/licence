@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="?android:attr/actionBarSize"
+    tools:context=".vignerons.VigneronDetailFragment">
+
+
+    <LinearLayout
+        android:id="@+id/dtl_vigneron_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/dtl_vigneron_label_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/libelle"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_label_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_domaine_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/domaine"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_domaine_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:id="@+id/dtl_vigneron_fixe_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fixe"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_fixe_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_mobile_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mobile"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_mobile_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_mail_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mail"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_mail_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_fax_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fax"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_fax_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_pays_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pays"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_pays_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_ville_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ville"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_ville_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_code_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/codepost"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_code_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_adresse_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/adresse"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_adresse_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_comment_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/comment"/>
+
+        <TextView
+            android:id="@+id/dtl_vigneron_comment_value"
+            android:textColor="@color/colorBlack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- <ImageButton android:id="@+id/dtl_grape_edit_button" android:layout_width="25dp" android:layout_height="25dp" android:contentDescription="Modifier" android:src="@drawable/ic_list_button_edit"/> -->
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
