@@ -28,7 +28,6 @@ import static com.example.dim.licence.vignerons.VigneronActivity.V_COUNT;
 public class VigneronListFragment extends Fragment implements ListFragmentInterface<Vigneron>, VigneronRecyclerInterface {
 
     private RecyclerView recyclerView;
-    private Bundle fromActivity;
     private SparseArray<Vigneron> list;
 
     public VigneronListFragment() {
@@ -85,7 +84,7 @@ public class VigneronListFragment extends Fragment implements ListFragmentInterf
 
     @Override
     public void updateSelectedItem(int selectedItemPos) {
-        //getArguments().putBundle(V_SELECTED, list.get(selectedItemPos).entityToBundle());
+        // row number starts at 1, not sparse array index !
         ((VigneronActivity)getActivity()).updateDetailFragment(list.get(selectedItemPos+1));
         Log.i(ARG_DEBUG, "updateSelectedItem: PASSED !");
     }

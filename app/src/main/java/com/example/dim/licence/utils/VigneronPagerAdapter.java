@@ -3,8 +3,11 @@ package com.example.dim.licence.utils;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.example.dim.licence.vignerons.VigneronActivity;
+
+import static com.example.dim.licence.MainActivity.ARG_DEBUG;
 
 public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -23,8 +26,14 @@ public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
         }
 
         if (position == 1) {
-            return parentActivity.getVigneronDetailFragment();
+                return parentActivity.getVigneronDetailFragment();
         }
+
+        if (position == 2) {
+                return parentActivity.getVigneronEditFragment();
+        }
+
+
 /*        if (position == 2) {
             if (parentActivity.isDetailMode()) {
                 return parentActivity.getDetailFragment();
@@ -49,11 +58,19 @@ public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "Liste";/*(position == 0) ? "hello !" :
-                (position == 1) ? "Liste" :
-                        (position == 3) ? "Edition" :
-                                (position == 2) ? (parentActivity.isNewMode()) ? "Creation" : "Detail"
-                                        : "";*/
+        if (position == 0){
+            return "Vignerons";
+        }
+
+        if (position == 1) {
+            return "Detail";
+        }
+
+        if (position == 2) {
+            return parentActivity.isNewMode() ? "Nouveau" : "Edition";
+        }
+
+        return  "";
     }
 
 
@@ -62,11 +79,9 @@ public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
      */
     @Override
     public int getCount() {
-        /*return parentActivity.isEditMode() ? 4
-                : parentActivity.isDetailMode() ? 3
-                : parentActivity.isNewMode() ? 3
-                : 2;*/
         return parentActivity.isDetailMode() ? 2
+                : parentActivity.isNewMode() ? 2
+                : parentActivity.isEditMode() ? 3
                 : 1;
     }
 
@@ -75,15 +90,19 @@ public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
      */
     @Override
     public int getItemPosition(Object object) {
-       /* if (object.getClass().getSimpleName().equalsIgnoreCase("MainFragment")) {
-            return 0;
-        }*/
+
         if (object.getClass().getSimpleName().equalsIgnoreCase("VigneronListFragment")) {
             return 0;
         }
         if (object.getClass().getSimpleName().equalsIgnoreCase("VigneronDetailFragment")) {
             return 1;
         }
+
+        if (object.getClass().getSimpleName().equalsIgnoreCase("VigneronEditFragment")) {
+                return (parentActivity.isNewMode() ? 1 : 2);
+        }
+
+        Log.i(ARG_DEBUG, "getItemPosition: POSITION == NONE");
         /*if (object.getClass().getSimpleName().equalsIgnoreCase("GrapeDetailFragment")) {
             if (parentActivity.isDetailMode()) {
                 return 2;

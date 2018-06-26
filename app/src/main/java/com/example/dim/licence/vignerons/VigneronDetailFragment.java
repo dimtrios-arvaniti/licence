@@ -3,6 +3,7 @@ package com.example.dim.licence.vignerons;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import com.example.dim.licence.R;
 import com.example.dim.licence.entities.Vigneron;
 import com.example.dim.licence.utils.DetailFragmentInterface;
+
+import static com.example.dim.licence.MainActivity.ARG_DEBUG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +32,7 @@ public class VigneronDetailFragment extends Fragment implements DetailFragmentIn
     private TextView tv_adresse;
     private TextView tv_comment;
 
+    private Vigneron item;
 
     public static VigneronDetailFragment newInstance() {
         VigneronDetailFragment fragment = new VigneronDetailFragment();
@@ -45,6 +49,7 @@ public class VigneronDetailFragment extends Fragment implements DetailFragmentIn
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(ARG_DEBUG, "onCreateView: CREATED FUCKING DETAIL VIEW !");
         View rootView = inflater.inflate(R.layout.fragment_vigneron_detail, container, false);
         tv_libelle = rootView.findViewById(R.id.dtl_vigneron_label_value);
         tv_domaine = rootView.findViewById(R.id.dtl_vigneron_domaine_value);
@@ -61,7 +66,9 @@ public class VigneronDetailFragment extends Fragment implements DetailFragmentIn
     }
 
     @Override
-    public void updateDetailFragment(Vigneron item) {
+    public void updateDetailFragment(Vigneron _item) {
+        this.item = _item;
+
         if (item != null) {
             tv_libelle.setText(item.getVigneronLibelle());
             tv_domaine.setText(item.getVigneronDomaine());
@@ -74,7 +81,10 @@ public class VigneronDetailFragment extends Fragment implements DetailFragmentIn
             tv_code.setText(item.getVigneronGeoloc().getGeolocCode());
             tv_adresse.setText(item.getVigneronGeoloc().getGeolocAdresse());
             tv_comment.setText(item.getVigneronComment());
-
         }
+    }
+
+    public Vigneron getItem() {
+        return item;
     }
 }
