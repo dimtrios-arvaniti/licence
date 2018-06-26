@@ -20,14 +20,15 @@ import com.example.dim.licence.utils.VigneronPagerAdapter;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
 
-public class VigneronActivity extends AppCompatActivity implements DetailFragmentInterface<Vigneron>, EditFragmentInterface<Vigneron> {
+public class VigneronActivity extends AppCompatActivity
+        implements DetailFragmentInterface<Vigneron>,
+        EditFragmentInterface<Vigneron> {
 
     public static final String V_SELECTED = "V_SELECTED";
     public static final String V_ = "V_";
     public static final String V_COUNT = "V_COUNT";
-    private Bundle vigneronsBundle;
 
-
+    private Bundle vigneronsBundle; // replace by list
     private ApplicationModel model;
     private Vigneron v_selected;
 
@@ -51,10 +52,8 @@ public class VigneronActivity extends AppCompatActivity implements DetailFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vigneron);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         model = ApplicationModel.getInstance(getApplicationContext());
         vigneronsBundle = new Bundle();
@@ -70,19 +69,21 @@ public class VigneronActivity extends AppCompatActivity implements DetailFragmen
         vigneronsBundle.putInt(V_COUNT, vIndex);
         vigneronsBundle.putInt(V_SELECTED, -1);
 
+
         btnCreate = findViewById(R.id.btnCreate);
         btnSort = findViewById(R.id.btnSort);
         btnEdit = findViewById(R.id.btnEdit);
-
         btnCreate.setVisibility(View.VISIBLE);
+        btnCreate.setEnabled(true);
         btnEdit.setVisibility(View.INVISIBLE);
+        btnEdit.setEnabled(false);
 
         vigneronListFragment = VigneronListFragment.newInstance(vigneronsBundle);
         vigneronDetailFragment = VigneronDetailFragment.newInstance();
         vigneronEditFragment = VigneronEditFragment.newInstance();
 
         pagerAdapter = new VigneronPagerAdapter(VigneronActivity.this, getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.addOnPageChangeListener(pageChangeListener);
     }
@@ -91,7 +92,7 @@ public class VigneronActivity extends AppCompatActivity implements DetailFragmen
     public void updateDetailFragment(Vigneron item) {
         detailMode = true;
         v_selected = item;
-        vigneronsBundle.putBundle(V_SELECTED, v_selected.entityToBundle());
+        Log.i(ARG_DEBUG, "updateDetailFragment: "+v_selected.toString());
         pagerAdapter.notifyDataSetChanged();
         vigneronDetailFragment.updateDetailFragment(v_selected);
         pagerAdapter.getPage(1);
@@ -106,32 +107,55 @@ public class VigneronActivity extends AppCompatActivity implements DetailFragmen
 
             if (position == 0) {
                 btnCreate.setVisibility(View.VISIBLE);
+                btnCreate.setEnabled(true);
                 btnEdit.setVisibility(View.INVISIBLE);
+                btnEdit.setEnabled(false);
                 detailMode = false;
                 newMode = false;
-                pagerAdapter.notifyDataSetChanged();
-                //btnCreate.show();
+
                 btnCreate.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.i(ARG_DEBUG, "onClick: CLICK");
+                        Log.i(ARG_DEBUG, "onClick: CLICKED CREATE");
                         newMode = true;
                         v_selected = new Vigneron();
+                        updateDetailFragment(v_selected);
                         updateEditFragment(v_selected);
                     }
                 });
                 return;
             }
 
-            if (detailMode) {
                 if (position == 1) {
-                    //detailMode = false;
-                    btnEdit.setVisibility(View.VISIBLE);
-                    btnCreate.setVisibility(View.INVISIBLE);
-                    newMode = false;
+                    if (detailMode){
+                        btnCreate.setVisibility(View.INVISIBLE);
+                        btnCreate.setEnabled(false);
+                        btnEdit.setVisibility(View.VISIBLE);
+                        btnEdit.setEnabled(true);
+
+                    btnEdit.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.i(ARG_DEBUG, "onClick: CLICKED EDIT");
+                            editMode = true;
+                            Log.i(ARG_DEBUG, "onClick: "+v_selected.toString());
+                            updateDetailFragment(v_selected);
+                            updateEditFragment(v_selected);
+                        }
+                    });
+                    return;
+                }
+
+                if (newMode) {
+                    Log.i(ARG_DEBUG, "onPageSelected: new mode to do !");
                     pagerAdapter.notifyDataSetChanged();
                     return;
                 }
+            }
+
+            if (position == 2) {
+                pagerAdapter.notifyDataSetChanged();
+                return;
             }
 
 /*
@@ -224,18 +248,19 @@ public class VigneronActivity extends AppCompatActivity implements DetailFragmen
     public void updateEditFragment(Vigneron item) {
         Log.i(ARG_DEBUG, "updateEditFragment: isNew ? " + newMode);
         if (newMode) {
-            pagerAdapter.notifyDataSetChanged();
-            vigneronEditFragment.updateEditFragment(new Vigneron());
-            pagerAdapter.getPage(1);
-            mViewPager.setCurrentItem(1);
-            return;
-        } else {
-            editMode = true;
-            pagerAdapter.notifyDataSetChanged();
-            vigneronEditFragment.updateEditFragment(item);
 
-            pagerAdapter.getPage(1);
-            mViewPager.setCurrentItem(1);
+            pagerAdapter.notifyDataSetChanged();
+            vigneronEditFragment.updateEditFragment(v_selected);
+            pagerAdapter.getPage(2);
+            mViewPager.setCurrentItem(2);
+            return;
+        }
+
+        if (editMode){
+            pagerAdapter.notifyDataSetChanged();
+            vigneronEditFragment.updateEditFragment(v_selected);
+            pagerAdapter.getPage(2);
+            mViewPager.setCurrentItem(2);
             return;
         }
     }
@@ -253,11 +278,19 @@ public class VigneronActivity extends AppCompatActivity implements DetailFragmen
         return vigneronDetailFragment;
     }
 
+    public VigneronEditFragment getVigneronEditFragment() {
+        return vigneronEditFragment;
+    }
+
     public boolean isEditMode() {
         return editMode;
     }
 
     public boolean isDetailMode() {
         return detailMode;
+    }
+
+    public boolean isNewMode() {
+        return newMode;
     }
 }
