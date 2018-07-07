@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">Licence</string>
+    <string name="title_activity_vigneron">VigneronActivity</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="sessioninfo_preferences">com.example.dim.licence_pvt_prefs_session</string>
+    <string name="libelle">Libelle</string>
+    <string name="domaine">Domaine</string>
+    <string name="appelation">Appelation</string>
+    <string name="fixe">N° fixe</string>
+    <string name="mobile">N° mobile</string>
+    <string name="mail">E-mail</string>
+    <string name="fax">N° fax</string>
+    <string name="pays">Pays</string>
+    <string name="ville">Ville</string>
+    <string name="codepost">Code postal</string>
+    <string name="adresse">Adresse</string>
+    <string name="comment">Commentaire</string>
+    <string name="supprimer">Supprimer</string>
+    <string name="editer">Editer</string>
+    <string name="annuler">Annuler</string>
+    <string name="valider">Valider</string>
+    <string name="sauvegarder">Sauvegarder</string>
+    <string name="filtrer">Filtrer</string>
+    <string name="nouveau">Nouveau</string>
+    <string name="chercher">chercher</string>
+    <string name="connexion">Connexion</string>
+    <string name="creation_de_compte">Creation de compte</string>
+    <string name="mot_de_passe">Mot de passe</string>
+    <string name="confirmer_le_mot_de_passe">Confirmer le mot de passe</string>
+    <string name="confirmation_du_mail">Confirmation du mail</string>
+    <string name="mot_de_passe_oubli">Mot de passe oublié ?</string>
+    <string name="type_de_vin">Type de vin</string>
+    <string name="prix">Prix</string>
+    <string name="annee">année</string>
+    <string name="annee_max">Année max.</string>
+    <string name="vigneron">Vigneron</string>
+    <string name="quantite">Quantité</string>
+    <string name="appeler_fixe">APPELER SUR LE FIXE</string>
+    <string name="appeler_mobile">APPELER SUR LE MOBILE</string>
+    <string name="envoyer_mail">ENVOYER UN MAIL</string>
+    <string name="ma_cave">Ma cave</string>
+    <string name="mes_vignerons">Mes vignerons</string>
+    <string name="navigation_drawer_open">Menu ouvert</string>
+    <string name="navigation_drawer_close">Menu fermé</string>
+    <string name="ajouter_vigneron">Ajouter</string>
+    <string name="acces_etat_reseau">Accéder à l\'état du réseau</string>
+    <string name="permission_camera_rationale">L\'accès à la camera est requis pour vous permettre de prendre des photos directement depuis l\'application.</string>
+    <string name="permission_net_state_rationale">L\'accès à l\état du réseau est requis pour que vos données puissent êtres synchronisés sur tout vos appareils. Cette permission est nécessaire au bon fonctionnement de l'application !</string>
+    <string name="permission_files_rationale">L\'accès à vos fichiers est necessaire pour sauvergarder les photos prises depuis l\'application ainsi que pour vous permettre d'ajouter des photos déjà existantes sur votre appareil.</string>
+
+    <string name="cave_image_prendre_photo">Prendre une photo</string>
+    <string name="cave_image_choisir_galerie">Choisir dans ma galerie</string>
+    <string name="minus_symbol">-</string>
+    <string name="plus_symbol">+</string>
+
+    <string-array name="cave_image_selection_type">
+        <item>Prendre une photo</item>
+        <item>Choisir dans ma galerie</item>
+    </string-array>
+
+    <string-array name="vigneronsFilterChoices">
+        <!--new String[]{"NONE", "NOM", "DOMAINE", "PAYS", "VILLE", "CODE POSTAL"};-->
+        <item>AUCUN</item>
+        <item>NOM</item>
+        <item>DOMAINE</item>
+        <item>PAYS</item>
+        <item>VILLE</item>
+        <item>CODE POSTAL</item>
+    </string-array>
+
+    <string-array name="caveFilterChoices">
+        <item>AUCUN</item>
+        <item>NOM</item>
+        <item>DOMAINE</item>
+        <item>APPELATION</item>
+        <item>VIGNERON</item>
+        <item>PRIX</item>
+    </string-array>
+
+   </resources>
