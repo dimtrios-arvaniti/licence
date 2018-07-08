@@ -1,6 +1,5 @@
 package com.example.dim.licence.fragments;
 
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -80,7 +78,7 @@ public class VigneronEditFragment extends Fragment {
             String input = et_ville.getText().toString();
             Log.i(ARG_DEBUG, "afterTextChanged: " + et_ville.getText().toString());
 
-            if (input.length() > 2) {
+            if (input.length() > 0) {
                 if (!input.contains("'")) {
                     villes = input.matches("[0-9]{1,}") ? model.filterVilleByZipCode(input) : model.filterVilleByLibelle(input);
                 }
@@ -124,23 +122,26 @@ public class VigneronEditFragment extends Fragment {
 
         model = MasterModel.getInstance(getContext());
         villes = model.getFirst15Villes();
-        makeFilteredList();
+        //makeFilteredList();
 
-        et_ville.setOnFocusChangeListener(new OnFocusChangeListener() {
+       /* et_ville.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b) {
                     et_ville.addTextChangedListener(textWatcher);
                 }
             }
-        });
+        });*/
+
+        et_ville.addTextChangedListener(textWatcher);
+
         et_ville.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 HashMap<String, String> sMap = (HashMap<String, String>) adapterView.getAdapter().getItem(i);
                 int id = Integer.valueOf(sMap.get("villeId"));
                 ville = model.getVilleById(id);
-                et_ville.removeTextChangedListener(textWatcher);
+               /* et_ville.removeTextChangedListener(textWatcher);*/
                 et_ville.setText(ville.getVilleLibelle());
                 Log.e("MainActivity", "OnItemClick Method Working..");
                 Toast.makeText(getContext(), adapterView.getAdapter().getItem(i).toString(), Toast.LENGTH_SHORT).show();
@@ -186,6 +187,7 @@ public class VigneronEditFragment extends Fragment {
         HashMap<String, String> map = null;
         for (Ville ville :
                 villes) {
+            Log.i(ARG_DEBUG, "makeFilteredList: "+ville.toString());
             map = new HashMap<>();
             map.put("villeId", String.valueOf(ville.getVilleId()));
             map.put("villeLibelle", ville.getVilleLibelle());
@@ -195,6 +197,7 @@ public class VigneronEditFragment extends Fragment {
 
         et_ville.setAdapter(new SimpleAdapter(getContext(), list, R.layout.autocomplete_list_item,
                 new String[]{"villeLibelle", "villeZipCode"}, new int[]{R.id.ac_li_ville, R.id.ac_li_zip}));
+        et_ville.showDropDown();
     }
 
 

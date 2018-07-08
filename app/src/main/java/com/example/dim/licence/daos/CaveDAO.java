@@ -453,7 +453,7 @@ public class CaveDAO implements BaseDAO<Cave> {
         Departement departement = null;
         Cursor cursor = sqLiteDatabase.query(TABLE_DEPARTEMENT,
                 new String[]{KEY_DEPARTEMENT_ID, KEY_DEPARTEMENT_LIBELLE, KEY_DEPARTEMENT_REGION},
-                KEY_REGION_ID + " = ?",
+                KEY_DEPARTEMENT_ID + " = ?",
                 new String[]{String.valueOf(itemId)},
                 null, null, null);
 

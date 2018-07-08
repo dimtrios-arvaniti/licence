@@ -167,7 +167,7 @@ public class VilleDAO implements BaseDAO<Ville> {
 
 
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_VILLE
-                + " WHERE LIKE('%" + text + "%', " + KEY_VILLE_LIBELLE + ")=1 LIMIT 15;", null);
+                + " WHERE LIKE('" + text + "%', " + KEY_VILLE_LIBELLE + ")=1 LIMIT 15;", null);
 
        /* Cursor cursor = sqLiteDatabase.query(TABLE_VILLE,
                 new String[]{KEY_VILLE_ID, KEY_VILLE_LIBELLE, KEY_VILLE_ZIP_CODE,
@@ -286,7 +286,7 @@ public class VilleDAO implements BaseDAO<Ville> {
         Cursor cursor = sqLiteDatabase.query(TABLE_VILLE,
                 new String[]{KEY_VILLE_ID, KEY_VILLE_LIBELLE, KEY_VILLE_ZIP_CODE,
                         KEY_VILLE_LATITUDE, KEY_VILLE_LONGITUDE, KEY_VILLE_DEPARTEMENT},
-                KEY_VILLE_ID + " BETWEEN 1 AND 5", null, null, null, null);
+                KEY_VILLE_ID + " BETWEEN 1 AND 2", null, null, null, null);
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
