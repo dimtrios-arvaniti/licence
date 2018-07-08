@@ -90,6 +90,7 @@ public class VigneronListFragment extends Fragment {
                     }
                 }
                 break;
+
             case "DOMAINE":
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
@@ -98,30 +99,52 @@ public class VigneronListFragment extends Fragment {
                     }
                 }
                 break;
-            case "PAYS":
+
+            case "DEPARTEMENT":
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
-                    if (backingList.get(key).getVigneronGeoloc().getGeolocPays().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+                    if (backingList.get(key).getVigneronGeoloc().getGeolocVille()
+                            .getVilleDepartement().getDepartementLibelle()
+                            .toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+
                         filteredList.put(key, backingList.get(key));
                     }
                 }
                 break;
+
+            case "REGION":
+                for (int i = 0; i < backingList.size(); i++) {
+                    int key = backingList.keyAt(i);
+                    if (backingList.get(key).getVigneronGeoloc().getGeolocVille()
+                            .getVilleDepartement().getDepartementRegion().getRegionLibelle()
+                            .toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+
+                        filteredList.put(key, backingList.get(key));
+                    }
+                }
+                break;
+
             case "VILLE":
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
-                    if (backingList.get(key).getVigneronGeoloc().getGeolocVille().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+                    if (backingList.get(key).getVigneronGeoloc().getGeolocVille()
+                            .getVilleLibelle().toLowerCase().trim().contains(value.toLowerCase().trim())) {
                         filteredList.put(key, backingList.get(key));
                     }
                 }
                 break;
+
             case "CODE POSTAL":
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
-                    if (backingList.get(key).getVigneronGeoloc().getGeolocCode().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+                    if (backingList.get(key).getVigneronGeoloc().getGeolocVille().getVilleZipCode()
+                            .toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+
                         filteredList.put(key, backingList.get(key));
                     }
                 }
                 break;
+
             default:
                 Log.e(ARG_DEBUG, "makeFilteredFromFilter: unknown FILTER TYPE for filter value [" + filter + "]");
                 break;
@@ -265,7 +288,7 @@ public class VigneronListFragment extends Fragment {
             throw new ClassCastException(getActivity().toString()
                     + " must implement CrudFragmentInterface<"
                     + getActivity().getClass().getSimpleName()
-                    +">");
+                    + ">");
         }
     }
 

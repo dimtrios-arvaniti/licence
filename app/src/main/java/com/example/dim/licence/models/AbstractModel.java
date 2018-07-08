@@ -8,53 +8,59 @@ import com.example.dim.licence.daos.ActionDAO;
 import com.example.dim.licence.daos.AppUserDAO;
 import com.example.dim.licence.daos.AppelationDAO;
 import com.example.dim.licence.daos.CaveDAO;
+import com.example.dim.licence.daos.DepartementDAO;
 import com.example.dim.licence.daos.GeolocalisationDAO;
 import com.example.dim.licence.daos.HistoriqueDAO;
+import com.example.dim.licence.daos.RegionDAO;
 import com.example.dim.licence.daos.TypeVinDAO;
 import com.example.dim.licence.daos.VigneronDAO;
+import com.example.dim.licence.daos.VilleDAO;
 import com.example.dim.licence.daos.VinDAO;
 import com.example.dim.licence.entities.Action;
 import com.example.dim.licence.entities.Appelation;
+import com.example.dim.licence.entities.Departement;
+import com.example.dim.licence.entities.Region;
 import com.example.dim.licence.entities.TypeVin;
 import com.example.dim.licence.entities.Vigneron;
+import com.example.dim.licence.entities.Ville;
 
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_ACTION;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_APPUSER;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_CAVE;
+import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_DEPARTEMENT;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_DOMAINE;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_GEOLOCALISATION;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_HISTORIQUE;
+import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_REGION;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_TYPEVIN;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_VIGNERON;
+import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_VILLE;
 import static com.example.dim.licence.models.DbHelper.CREATE_TABLE_VIN;
 import static com.example.dim.licence.models.DbHelper.DATABASE_VERSION;
+import static com.example.dim.licence.models.DbHelper.DEPARTEMENT_RAW_INSERT;
+import static com.example.dim.licence.models.DbHelper.MASTER_DATABASE_NAME;
+import static com.example.dim.licence.models.DbHelper.REGION_RAW_INSERT;
 
 public abstract class AbstractModel extends SQLiteOpenHelper {
 
     // Single instance of MasterModel
     protected static MasterModel model;
     // Model DAO's
-    private ActionDAO actionDAO;
-    private AppelationDAO appelationDAO;
-    private AppUserDAO appUserDAO;
-    private CaveDAO caveDAO;
-    private GeolocalisationDAO geolocalisationDAO;
-    private HistoriqueDAO historiqueDAO;
-    private TypeVinDAO typeVinDAO;
-    private VigneronDAO vigneronDAO;
-    private VinDAO vinDAO;
+    protected ActionDAO actionDAO;
+    protected AppelationDAO appelationDAO;
+    protected AppUserDAO appUserDAO;
+    protected CaveDAO caveDAO;
+    protected GeolocalisationDAO geolocalisationDAO;
+    protected HistoriqueDAO historiqueDAO;
+    protected TypeVinDAO typeVinDAO;
+    protected VigneronDAO vigneronDAO;
+    protected VinDAO vinDAO;
+    protected VilleDAO villeDAO;
+    protected RegionDAO regionDAO;
+    protected DepartementDAO departementDAO;
 
-    protected AbstractModel(Context context, String dbName) {
-        super(context, dbName, null, DATABASE_VERSION);
-        actionDAO = new ActionDAO();
-        appelationDAO = new AppelationDAO();
-        appUserDAO = new AppUserDAO();
-        caveDAO = new CaveDAO();
-        geolocalisationDAO = new GeolocalisationDAO();
-        historiqueDAO = new HistoriqueDAO();
-        typeVinDAO = new TypeVinDAO();
-        vigneronDAO = new VigneronDAO();
-        vinDAO = new VinDAO();
+    protected AbstractModel(Context context) {
+        super(context, MASTER_DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -62,6 +68,9 @@ public abstract class AbstractModel extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_ACTION);
         sqLiteDatabase.execSQL(CREATE_TABLE_DOMAINE);
         sqLiteDatabase.execSQL(CREATE_TABLE_TYPEVIN);
+        sqLiteDatabase.execSQL(CREATE_TABLE_REGION);
+        sqLiteDatabase.execSQL(CREATE_TABLE_DEPARTEMENT);
+        sqLiteDatabase.execSQL(CREATE_TABLE_VILLE);
         sqLiteDatabase.execSQL(CREATE_TABLE_GEOLOCALISATION);
         sqLiteDatabase.execSQL(CREATE_TABLE_APPUSER);
         sqLiteDatabase.execSQL(CREATE_TABLE_VIGNERON);
@@ -69,6 +78,8 @@ public abstract class AbstractModel extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_CAVE);
         sqLiteDatabase.execSQL(CREATE_TABLE_HISTORIQUE);
         initDatabaseData(sqLiteDatabase);
+        sqLiteDatabase.execSQL(REGION_RAW_INSERT);
+        sqLiteDatabase.execSQL(DEPARTEMENT_RAW_INSERT);
     }
 
     /**
@@ -79,6 +90,24 @@ public abstract class AbstractModel extends SQLiteOpenHelper {
         initTypeVinsDico(sqLiteDatabase);
         initAppelationsDico(sqLiteDatabase);
         initActionData(sqLiteDatabase);
+        initVigneronData(sqLiteDatabase);
+        initVillesData(sqLiteDatabase);
+
+    }
+
+    private void initVillesData(SQLiteDatabase sqLiteDatabase) {
+        Region region = new Region();
+        region.setRegionLibelle("UNDEFINED");
+        Departement departement = new Departement();
+        departement.setDepartementLibelle("UNDEFINED");
+        departement.setDepartementRegion(region);
+        Ville ville = new Ville();
+        ville.setVilleLibelle("AUCUN");
+        ville.setVilleDepartement(departement);
+        villeDAO.insert(sqLiteDatabase, ville);
+        }
+
+    private void initVigneronData(SQLiteDatabase sqLiteDatabase) {
         //init default vigneron
         Vigneron vigneron = new Vigneron();
         vigneron.setVigneronLibelle("AUCUN");
@@ -143,42 +172,6 @@ public abstract class AbstractModel extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         // FIRST VERSION FOR NOW !
-    }
-
-    protected ActionDAO getActionDAO() {
-        return actionDAO;
-    }
-
-    protected AppelationDAO getAppelationDAO() {
-        return appelationDAO;
-    }
-
-    protected AppUserDAO getAppUserDAO() {
-        return appUserDAO;
-    }
-
-    protected CaveDAO getCaveDAO() {
-        return caveDAO;
-    }
-
-    protected GeolocalisationDAO getGeolocalisationDAO() {
-        return geolocalisationDAO;
-    }
-
-    protected HistoriqueDAO getHistoriqueDAO() {
-        return historiqueDAO;
-    }
-
-    protected TypeVinDAO getTypeVinDAO() {
-        return typeVinDAO;
-    }
-
-    protected VigneronDAO getVigneronDAO() {
-        return vigneronDAO;
-    }
-
-    protected VinDAO getVinDAO() {
-        return vinDAO;
     }
 
 }

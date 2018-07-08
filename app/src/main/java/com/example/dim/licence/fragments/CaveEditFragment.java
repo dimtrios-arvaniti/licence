@@ -692,7 +692,10 @@ public class CaveEditFragment extends Fragment {
 
         // set new vigneron to item (Cave)
         item.getCaveVin().setVinVigneron(vigneron);
-        item.getCaveVin().setVinImage(pictureUri.toString());
+        if (pictureUri != null) {
+            item.getCaveVin().setVinImage(pictureUri.toString());
+        }
+
     }
 
     public Bitmap getResizedBitmap(Bitmap bm) {

@@ -29,10 +29,11 @@ public class VigneronDetailFragment extends Fragment {
     private TextView tv_mobile;
     private TextView tv_mail;
     private TextView tv_fax;
-    private TextView tv_pays;
     private TextView tv_ville;
-    private TextView tv_code;
-    private TextView tv_adresse;
+    private TextView tv_adresse1;
+    private TextView tv_adresse2;
+    private TextView tv_adresse3;
+    private TextView tv_complement;
     private TextView tv_comment;
     private Button editBtn;
     private Button deleteBtn;
@@ -88,10 +89,11 @@ public class VigneronDetailFragment extends Fragment {
         tv_mobile = rootView.findViewById(R.id.dtl_vigneron_mobile_value);
         tv_mail = rootView.findViewById(R.id.dtl_vigneron_mail_value);
         tv_fax = rootView.findViewById(R.id.dtl_vigneron_fax_value);
-        tv_pays = rootView.findViewById(R.id.dtl_vigneron_pays_value);
+        tv_complement = rootView.findViewById(R.id.dtl_vigneron_complement_value);
         tv_ville = rootView.findViewById(R.id.dtl_vigneron_ville_value);
-        tv_code = rootView.findViewById(R.id.dtl_vigneron_code_value);
-        tv_adresse = rootView.findViewById(R.id.dtl_vigneron_adresse_value);
+        tv_adresse1 = rootView.findViewById(R.id.dtl_vigneron_adresse1_value);
+        tv_adresse2 = rootView.findViewById(R.id.dtl_vigneron_adresse2_value);
+        tv_adresse3 = rootView.findViewById(R.id.dtl_vigneron_adresse3_value);
         tv_comment = rootView.findViewById(R.id.dtl_vigneron_comment_value);
         editBtn = rootView.findViewById(R.id.btnEdit);
         deleteBtn = rootView.findViewById(R.id.btnDel);
@@ -114,11 +116,16 @@ public class VigneronDetailFragment extends Fragment {
             tv_comment.setText(item.getVigneronComment() == null ? "" : item.getVigneronComment());
 
             if (item.getVigneronGeoloc() != null) {
-                tv_pays.setText(item.getVigneronGeoloc().getGeolocPays() == null ? "" : item.getVigneronGeoloc().getGeolocPays());
-                tv_ville.setText(item.getVigneronGeoloc().getGeolocVille() == null ? "" : item.getVigneronGeoloc().getGeolocVille());
-                tv_code.setText(item.getVigneronGeoloc().getGeolocCode() == null ? "" : item.getVigneronGeoloc().getGeolocCode());
-                tv_adresse.setText(item.getVigneronGeoloc().getGeolocAdresse() == null ? "" : item.getVigneronGeoloc().getGeolocAdresse());
-            }
+                tv_ville.setText(item.getVigneronGeoloc().getGeolocVille() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocVille().getVilleLibelle());
+                tv_adresse1.setText(item.getVigneronGeoloc().getGeolocVille() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocAdresse1());
+                tv_adresse2.setText(item.getVigneronGeoloc().getGeolocVille() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocAdresse2());
+                tv_adresse3.setText(item.getVigneronGeoloc().getGeolocVille() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocAdresse3());}
+                        tv_complement.setText(item.getVigneronGeoloc().getGeolocVille() == null ? ""
+                    : item.getVigneronGeoloc().getGeolocComplement());
         }
     }
 

@@ -4,25 +4,40 @@ package com.example.dim.licence.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.dim.licence.R;
 import com.example.dim.licence.VigneronActivity;
+import com.example.dim.licence.dialogs.VigneronDialogs;
 import com.example.dim.licence.entities.Geolocalisation;
 import com.example.dim.licence.entities.Vigneron;
+import com.example.dim.licence.entities.Ville;
+import com.example.dim.licence.models.MasterModel;
 import com.example.dim.licence.utils.interfaces.CrudFragmentInterface;
-import com.example.dim.licence.dialogs.VigneronDialogs;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.VigneronActivity.V_DIALOG_TYPE;
 import static com.example.dim.licence.utils.commons.Commons.MAIL_REGEX;
 import static com.example.dim.licence.utils.commons.Commons.TEL_REGEX;
-import static com.example.dim.licence.VigneronActivity.V_DIALOG_TYPE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,20 +46,51 @@ public class VigneronEditFragment extends Fragment {
 
     private CrudFragmentInterface<Vigneron> activityCallback;
     private Vigneron item;
+    private Ville ville;
+    private MasterModel model;
 
-    private EditText et_libelle;
-    private EditText et_domaine;
-    private EditText et_fixe;
-    private EditText et_mobile;
-    private EditText et_mail;
-    private EditText et_fax;
-    private EditText et_pays;
-    private EditText et_ville;
-    private EditText et_code;
-    private EditText et_adresse;
-    private EditText et_comment;
+    private TextInputEditText et_libelle;
+    private TextInputEditText et_domaine;
+    private TextInputEditText et_fixe;
+    private TextInputEditText et_mobile;
+    private TextInputEditText et_mail;
+    private TextInputEditText et_fax;
+    private AutoCompleteTextView et_ville;
+    private TextInputEditText et_adresse1;
+    private TextInputEditText et_adresse2;
+    private TextInputEditText et_adresse3;
+    private TextInputEditText et_complement;
+    private TextInputEditText et_comment;
     private Button btnCancel;
     private Button btnSave;
+
+    private List<Ville> villes;
+
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            String input = et_ville.getText().toString();
+            Log.i(ARG_DEBUG, "afterTextChanged: " + et_ville.getText().toString());
+
+            if (input.length() > 2) {
+                if (!input.contains("'")) {
+                    villes = input.matches("[0-9]{1,}") ? model.filterVilleByZipCode(input) : model.filterVilleByLibelle(input);
+                }
+            }
+
+            if (villes != null) {
+                makeFilteredList();
+            }
+        }
+    };
 
     public VigneronEditFragment() {
         // Required empty public constructor
@@ -52,8 +98,8 @@ public class VigneronEditFragment extends Fragment {
 
     public static VigneronEditFragment newInstance() {
         VigneronEditFragment fragment = new VigneronEditFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+        Bundle bundle = new Bundle();
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -67,13 +113,40 @@ public class VigneronEditFragment extends Fragment {
         et_mobile = rootView.findViewById(R.id.edt_vigneron_mobile_value);
         et_mail = rootView.findViewById(R.id.edt_vigneron_mail_value);
         et_fax = rootView.findViewById(R.id.edt_vigneron_fax_value);
-        et_pays = rootView.findViewById(R.id.edt_vigneron_pays_value);
-        et_ville = rootView.findViewById(R.id.edt_vigneron_ville_value);
-        et_code = rootView.findViewById(R.id.edt_vigneron_code_value);
-        et_adresse = rootView.findViewById(R.id.edt_vigneron_adresse_value);
+        et_ville = rootView.findViewById(R.id.edt_vigneron_ville);
+        et_adresse1 = rootView.findViewById(R.id.edt_vigneron_adresse1);
+        et_adresse2 = rootView.findViewById(R.id.edt_vigneron_adresse2);
+        et_adresse3 = rootView.findViewById(R.id.edt_vigneron_adresse3);
+        et_complement = rootView.findViewById(R.id.edt_vigneron_complement);
         et_comment = rootView.findViewById(R.id.edt_vigneron_comment_value);
         btnSave = rootView.findViewById(R.id.btnSave);
         btnCancel = rootView.findViewById(R.id.btnCancel);
+
+        model = MasterModel.getInstance(getContext());
+        villes = model.getFirst15Villes();
+        makeFilteredList();
+
+        et_ville.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    et_ville.addTextChangedListener(textWatcher);
+                }
+            }
+        });
+        et_ville.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                HashMap<String, String> sMap = (HashMap<String, String>) adapterView.getAdapter().getItem(i);
+                int id = Integer.valueOf(sMap.get("villeId"));
+                ville = model.getVilleById(id);
+                et_ville.removeTextChangedListener(textWatcher);
+                et_ville.setText(ville.getVilleLibelle());
+                Log.e("MainActivity", "OnItemClick Method Working..");
+                Toast.makeText(getContext(), adapterView.getAdapter().getItem(i).toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         btnCancel.setOnClickListener(new OnClickListener() {
             @Override
@@ -93,7 +166,7 @@ public class VigneronEditFragment extends Fragment {
                     if (getActivity().getIntent() != null) {
                         // create new item !
                         item = new Vigneron();
-                        ((VigneronActivity)getActivity()).setIsNewMode();
+                        ((VigneronActivity) getActivity()).setIsNewMode();
                         // do basic stuff
                         //Vigneron v = updateVigneronFromView();
                         activityCallback.onSaveClick(updateVigneronFromView());
@@ -102,12 +175,26 @@ public class VigneronEditFragment extends Fragment {
                         //Vigneron vigneron = ;
                         activityCallback.onSaveClick(updateVigneronFromView());
                     }
-
                 }
-
             }
         });
         return rootView;
+    }
+
+    private void makeFilteredList() {
+        List<HashMap<String, String>> list = new ArrayList<>();
+        HashMap<String, String> map = null;
+        for (Ville ville :
+                villes) {
+            map = new HashMap<>();
+            map.put("villeId", String.valueOf(ville.getVilleId()));
+            map.put("villeLibelle", ville.getVilleLibelle());
+            map.put("villeZipCode", ville.getVilleZipCode());
+            list.add(map);
+        }
+
+        et_ville.setAdapter(new SimpleAdapter(getContext(), list, R.layout.autocomplete_list_item,
+                new String[]{"villeLibelle", "villeZipCode"}, new int[]{R.id.ac_li_ville, R.id.ac_li_zip}));
     }
 
 
@@ -133,16 +220,21 @@ public class VigneronEditFragment extends Fragment {
             if (item.getVigneronGeoloc().getGeolocId() != null) {
                 geoloc.setGeolocId(item.getVigneronGeoloc().getGeolocId());
             }
-            geoloc.setGeolocPays(et_pays.getText().toString());
-            geoloc.setGeolocVille(et_ville.getText().toString());
-            geoloc.setGeolocCode(et_code.getText().toString());
-            geoloc.setGeolocAdresse(et_adresse.getText().toString());
+            if (ville != null) {
+                geoloc.setGeolocVille(ville);
+            }
+
+            geoloc.setGeolocAdresse1(et_adresse1.getText().toString());
+            geoloc.setGeolocAdresse2(et_adresse2.getText().toString());
+            geoloc.setGeolocAdresse3(et_adresse3.getText().toString());
+            geoloc.setGeolocComplement(et_complement.getText().toString());
 
             vigneron.setVigneronGeoloc(geoloc);
         }
 
         return vigneron;
     }
+
 
     private boolean validateInput() {
         if (et_libelle.getText().toString().isEmpty()) {
@@ -215,27 +307,27 @@ public class VigneronEditFragment extends Fragment {
             return true;
         }
 
-        if (et_pays.getText().toString().length() >= 200) {
-            Toast.makeText(getContext(), "Le pays ne peut avoir plus de 200 caractères !", Toast.LENGTH_LONG).show();
-            et_pays.requestFocus();
+        if (et_adresse1.getText().toString().length() >= 200) {
+            Toast.makeText(getContext(), "Chaque champs d'adresse ne peut avoir plus de 200 caractères !", Toast.LENGTH_LONG).show();
+            et_adresse1.requestFocus();
             return true;
         }
 
-        if (et_ville.getText().toString().length() >= 200) {
-            Toast.makeText(getContext(), "La ville ne peut avoir plus de 200 caractères !", Toast.LENGTH_LONG).show();
-            et_ville.requestFocus();
+        if (et_adresse2.getText().toString().length() >= 200) {
+            Toast.makeText(getContext(), "Chaque champs d'adresse ne peut avoir plus de 200 caractères !", Toast.LENGTH_LONG).show();
+            et_adresse2.requestFocus();
             return true;
         }
 
-        if (et_code.getText().toString().length() >= 20) {
-            Toast.makeText(getContext(), "Le code postal ne peut avoir plus de 20 caractères !", Toast.LENGTH_LONG).show();
-            et_code.requestFocus();
+        if (et_adresse3.getText().toString().length() >= 200) {
+            Toast.makeText(getContext(), "Chaque champs d'adresse ne peut avoir plus de 200 caractères !", Toast.LENGTH_LONG).show();
+            et_adresse3.requestFocus();
             return true;
         }
 
-        if (et_adresse.getText().toString().length() >= 500) {
-            Toast.makeText(getContext(), "L'adresse ne peut avoir plus de 500 caractères !", Toast.LENGTH_LONG).show();
-            et_adresse.requestFocus();
+        if (et_complement.getText().toString().length() > 3) {
+            Toast.makeText(getContext(), "Le complément ne peut avoir plus de 3 caractères !", Toast.LENGTH_LONG).show();
+            et_complement.requestFocus();
             return true;
         }
         return false;
@@ -244,7 +336,7 @@ public class VigneronEditFragment extends Fragment {
     private boolean isEditTextValid(EditText editText, String regex) {
         if (!editText.getText().toString().isEmpty()) {
             if (!editText.getText().toString().matches(regex)) {
-                Toast.makeText(getContext(), "Le champs "+editText.getHint()+" est invalide !", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Le champs " + editText.getHint() + " est invalide !", Toast.LENGTH_LONG).show();
                 editText.requestFocus();
                 return false;
             }
@@ -262,12 +354,18 @@ public class VigneronEditFragment extends Fragment {
             et_mail.setText(item.getVigneronMail() == null ? "" : item.getVigneronMail());
             et_fax.setText(item.getVigneronFax() == null ? "" : item.getVigneronFax());
             et_comment.setText(item.getVigneronComment() == null ? "" : item.getVigneronComment());
-            
+
             if (item.getVigneronGeoloc() != null) {
-                et_pays.setText(item.getVigneronGeoloc().getGeolocPays() == null ? "" : item.getVigneronGeoloc().getGeolocPays());
-                et_ville.setText(item.getVigneronGeoloc().getGeolocVille() == null ? "" : item.getVigneronGeoloc().getGeolocVille());
-                et_code.setText(item.getVigneronGeoloc().getGeolocCode() == null ? "" : item.getVigneronGeoloc().getGeolocCode());
-                et_adresse.setText(item.getVigneronGeoloc().getGeolocAdresse() == null ? "" : item.getVigneronGeoloc().getGeolocAdresse());
+                et_ville.setText(item.getVigneronGeoloc().getGeolocVille() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocVille().getVilleLibelle());
+                et_adresse1.setText(item.getVigneronGeoloc().getGeolocAdresse1() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocAdresse1());
+                et_adresse2.setText(item.getVigneronGeoloc().getGeolocAdresse2() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocAdresse2());
+                et_adresse3.setText(item.getVigneronGeoloc().getGeolocAdresse3() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocAdresse3());
+                et_complement.setText(item.getVigneronGeoloc().getGeolocComplement() == null ? ""
+                        : item.getVigneronGeoloc().getGeolocComplement());
             }
         }
     }
@@ -288,5 +386,9 @@ public class VigneronEditFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         activityCallback = null;
+    }
+
+    public List<Ville> getVilles() {
+        return villes;
     }
 }

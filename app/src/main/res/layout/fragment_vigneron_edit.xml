@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:columnCount="1"
-            android:rowCount="11">
+            android:rowCount="12">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_column="0"
@@ -42,7 +42,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_column="0"
                 android:layout_row="1"
-                android:hint="@string/appelation">
+                android:hint="@string/domaine">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/edt_vigneron_domaine_value"
@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_margin="5dp"
-                    android:hint="@string/appelation"
+                    android:hint="@string/domaine"
                     android:textColor="@color/colorBlack"
                     android:textSize="20sp"/>
             </android.support.design.widget.TextInputLayout>
@@ -121,66 +121,39 @@
 
             </android.support.design.widget.TextInputLayout>
 
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_column="0"
-                android:layout_row="6"
-                android:hint="@string/pays">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_vigneron_pays_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_margin="5dp"
-                    android:hint="@string/pays"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="20sp"/>
-            </android.support.design.widget.TextInputLayout>
+            <AutoCompleteTextView
+            android:layout_column="0"
+            android:layout_row="6"
+            android:hint="@string/villeEtCp"
+            android:id="@+id/edt_vigneron_ville"/>
 
 
             <android.support.design.widget.TextInputLayout
                 android:layout_column="0"
                 android:layout_row="7"
-                android:hint="@string/ville">
+                app:counterMaxLength="200"
+                android:hint="@string/adresse">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_vigneron_ville_value"
+                    android:id="@+id/edt_vigneron_adresse1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_margin="5dp"
-                    android:hint="@string/ville"
+                    android:hint="@string/adresse"
+                    android:maxLength="200"
                     android:textColor="@color/colorBlack"
                     android:textSize="20sp"/>
             </android.support.design.widget.TextInputLayout>
-
 
             <android.support.design.widget.TextInputLayout
                 android:layout_column="0"
                 android:layout_row="8"
-                android:hint="@string/codepost">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_vigneron_code_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_margin="5dp"
-                    android:hint="@string/codepost"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="20sp"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_column="0"
-                android:layout_row="9"
+                app:counterMaxLength="200"
                 android:hint="@string/adresse">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/edt_vigneron_adresse_value"
+                    android:id="@+id/edt_vigneron_adresse2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
@@ -190,11 +163,46 @@
                     android:textSize="20sp"/>
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_column="0"
+                android:layout_row="9"
+                app:counterMaxLength="200"
+                android:hint="@string/adresse">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edt_vigneron_adresse3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_margin="5dp"
+                    android:hint="@string/adresse"
+                    android:maxLength="200"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp"/>
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_column="0"
                 android:layout_row="10"
-                android:hint="@string/comment">
+                android:hint="@string/complement"
+                app:counterMaxLength="3">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edt_vigneron_complement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_margin="5dp"
+                    android:hint="@string/complement"
+                    android:maxLength="3"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_column="0"
+                android:hint="@string/comment"
+                android:layout_row="11">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/edt_vigneron_comment_value"

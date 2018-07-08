@@ -188,6 +188,7 @@ public class CaveActivity extends AppCompatActivity
         // init database access and DAO's
         model = MasterModel.getInstance(getApplicationContext());
 
+
         // init bundle for first launch of list fragment
         caveBundle = new Bundle();
         int vIndex = 0;
@@ -240,6 +241,8 @@ public class CaveActivity extends AppCompatActivity
         }
         ditionnaryBundle.putInt("V_COUNT", vIndex);
         ditionnaryBundle.putInt("V_SELECTED", -1);
+
+
 
         // init some settings for pager
         newMode = false;

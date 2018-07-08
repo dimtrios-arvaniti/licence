@@ -1,5 +1,7 @@
 package com.example.dim.licence;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -18,11 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dim.licence.entities.AppUser;
+import com.example.dim.licence.entities.Departement;
+import com.example.dim.licence.entities.Ville;
 import com.example.dim.licence.models.MasterModel;
 import com.example.dim.licence.utils.uicustoms.LoginPanel;
 
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -130,9 +136,16 @@ public class MainActivity extends AppCompatActivity {
   */              // change view to show loading screen while sync ..
                 prepareView();
 
-                // Launch vigneron task
-                LoadAsyncTask iniTask = new LoadAsyncTask();
-                iniTask.execute();
+                if (model.isVillesEmpty()) {
+                    InitializeDatabaseTask initializeDatabaseTask = new InitializeDatabaseTask(MainActivity.this);
+                    initializeDatabaseTask.execute();
+                } else {
+                    // Launch vigneron task
+                    LoadAsyncTask iniTask = new LoadAsyncTask();
+                    iniTask.execute();
+                }
+
+
 
             }
         });
@@ -141,13 +154,15 @@ public class MainActivity extends AppCompatActivity {
         loginCreateButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-              if (isInvalidCreateLoginInput()) {
+                if (isInvalidCreateLoginInput()) {
                     return;
                 }
 
                 // Launch vigneron task
-                LoadAsyncTask iniTask = new LoadAsyncTask();
-                iniTask.execute();
+                //LoadAsyncTask iniTask = new LoadAsyncTask();
+                //iniTask.execute();
+                InitializeDatabaseTask initializeDatabaseTask = new InitializeDatabaseTask(MainActivity.this);
+                initializeDatabaseTask.execute();
             }
         });
 
@@ -167,9 +182,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
 
 
     }
@@ -262,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-         if (!newMail.getText().toString().matches(MAIL_REGEX)) {
+        if (!newMail.getText().toString().matches(MAIL_REGEX)) {
             Toast.makeText(MainActivity.this, "Champs invalide !", Toast.LENGTH_SHORT).show();
             newMail.requestFocus();
             return true;
@@ -359,31 +371,97 @@ public class MainActivity extends AppCompatActivity {
         return -1;
     }
 
-    private void initDumyData() {
-       // insert dic
+    public class InitializeDatabaseTask extends
+            AsyncTask<Void, Integer, Object> {
+        private ProgressDialog progressDialog;
+        private ArrayList<String> rows = new ArrayList<>();
+        private File rawFile;
+        boolean finished = false;
+        //private PowerManager.WakeLock wakeLock;
+        private Activity activity;
+        //private transient int originalRequestedOrientation;
 
-        /* DUMMY DATA
-        Vigneron v;
-        Geolocalisation geoloc;
-
-        for (int i = 0; i < 9; i++) {
-            v = new Vigneron();
-            geoloc = new Geolocalisation();
-            geoloc.setGeolocVille("PARIS");
-            geoloc.setGeolocCode("7500" + i);
-            geoloc.setGeolocPays("FRANCE");
-            geoloc.setGeolocAdresse(i + " rue de paris");
-            long gid = model.insertGeolocalisation(model.getWritableDatabase(), geoloc);
-            v.setVigneronLibelle("Vigneron " + i);
-            v.setVigneronDomaine("domaine " + i);
-            v.setVigneronFixe("000000000" + i);
-            v.setVigneronGeoloc(geoloc);
-            model.getVigneronDAO().insertVigneron(model.getWritableDatabase(), v, Integer.valueOf(String.valueOf(gid)));
+        public InitializeDatabaseTask(Activity activity) {
+            super();
+            this.activity = activity;
+            progressDialog = new ProgressDialog(activity);
+            progressDialog.setTitle("Loading base data");
+            progressDialog.setIndeterminate(true);
+            //progressDialog.setProgress();
         }
- */
+
+        @Override
+        protected Object doInBackground(Void... voids) {
+            //progressDialog.show();
+            Log.i(ARG_DEBUG, "doInBackground: BACKGROUND LAUNCH !!!");
+            if (model.isVillesEmpty()) {
+                InputStream fileInputStream = getResources().openRawResource(R.raw.villes_france);
+                BufferedReader buffer = new BufferedReader(new InputStreamReader(fileInputStream));
+
+                String line = null;
+                int index = 0;
+                try {
+                    while ((line = buffer.readLine()) != null) {
+                        if (!line.trim().isEmpty()) {
+                            if (!line.startsWith("#")) {
+
+                           // Log.i(ARG_DEBUG, "doInBackground: " + line);
+                            String[] data = line.split(",");
+
+                            Ville ville = new Ville();
+                            ville.setVilleId(Long.valueOf(data[0]));
+                            Departement departement = model.getDepartmentById(Integer.valueOf(data[1]));
+                            if (departement != null) {
+                                ville.setVilleDepartement(departement);
+                            }
+                            ville.setVilleZipCode(data[2]);
+                            ville.setVilleLibelle(data[3]);
+                            ville.setVilleLatitude(data[4]);
+                            ville.setVilleLongitude(data[5]);
+                            boolean b = model.insertVille(ville);
+                            index++;
+                           // Log.i(ARG_DEBUG, "doInBackground: insertion n° "+index+ " success : " + b);
+
+                          /*  try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }*/
+                            }
+                        }
+                    }
+                    //inputStreamReader.close();
+                    buffer.close();
+                    fileInputStream.close();
+                    finished = true;
+
+                } catch (IOException e) {
+                    Log.e(ARG_DEBUG, "doInBackground: ", e);
+                }
+            }
+            Log.i(ARG_DEBUG, "doInBackground: "+finished);
+            return finished;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+
+            Intent intent = new Intent(MainActivity.this, CaveActivity.class);
+            startActivity(intent);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.show();
+
+        }
     }
 
     class LoadAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+        int progress = 0;
 
         Thread t = new Thread() {
             @Override
@@ -412,19 +490,83 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            int progress = 0;
+            if (model == null) {
+                model.getInstance(getApplicationContext());
+                //    model = new MasterModel(getApplicationContext());
+            }
+            ArrayList<String> rows = new ArrayList<>();
 
-            while (progress < 100) {
+            if (model.isVillesEmpty()) {
+                InputStream fileInputStream = getResources().openRawResource(R.raw.villes_france);
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+                BufferedReader buffer = new BufferedReader(inputStreamReader);
+
+
                 try {
-                    Thread.sleep(200);
-                    progress += 20;
-                    onProgressUpdate(progress);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    while (buffer.ready()) {
+
+                        String line = buffer.readLine();
+                        if (!line.trim().isEmpty()) {
+                            rows.add(line);
+                        }
+                    }
+                    inputStreamReader.close();
+                    buffer.close();
+
+                } catch (IOException e) {
+                    Log.e(ARG_DEBUG, "doInBackground: ", e);
                 }
+
+                /*
+                progress += 10;
+                onProgressUpdate(progress);*/
+
+                for (int i = 0; i < rows.size(); i++) {
+                    //insertVilles(rows, start, limit);
+                   /*String requet = "INSERT INTO "+TABLE_VILLE+" VALUES "
+                           +rows.get(i)+ ";";*/
+                    String[] data = rows.get(i).split(",");
+                    Ville ville = new Ville();
+                    ville.setVilleId(Long.valueOf(data[0]));
+                    Departement departement = model.getDepartmentById(Integer.valueOf(data[1]));
+                    if (departement != null) {
+                        ville.setVilleDepartement(departement);
+                    }
+                    ville.setVilleZipCode(data[2]);
+                    ville.setVilleLibelle(data[3]);
+                    ville.setVilleLatitude(data[4]);
+                    ville.setVilleLongitude(data[5]);
+                    model.insertVille(ville);
+
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    progress += 3;
+                    onProgressUpdate(progress);
+                    Log.i(ARG_DEBUG, "doInBackground: Progress " + progress);
+                }
+
+                progress += 10;
+                onProgressUpdate(progress);
             }
             return null;
         }
+/*
+        private void insertVilles(ArrayList<String> rows, int start, int limit) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("INSERT INTO ville VALUES ");
+            for (int it = start; it < limit; it++) {
+                sb.append(rows.get(it));
+            }
+            sb.replace(sb.length()-1, sb.length(), "");
+            sb.append(";");
+
+            Log.i(ARG_DEBUG, "insertVilles: REQUEST "+sb.toString());
+            model.insertVille(sb.toString());
+        }*/
     }
 
 

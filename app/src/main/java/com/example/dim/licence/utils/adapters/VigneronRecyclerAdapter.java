@@ -90,10 +90,10 @@ public class VigneronRecyclerAdapter
         holder.vhLabel.setText(parent.getList().get(keyAt).getVigneronLibelle());
         holder.vhDomaine.setText(String.valueOf(parent.getList().get(keyAt).getVigneronDomaine()));
         if (parent.getList().get(keyAt).getVigneronGeoloc().getGeolocVille() != null) {
-            holder.vhVille.setText(String.valueOf(parent.getList().get(keyAt).getVigneronGeoloc().getGeolocVille()));
+            holder.vhVille.setText(String.valueOf(parent.getList().get(keyAt).getVigneronGeoloc().getGeolocVille().getVilleLibelle()));
         }
-        if (parent.getList().get(keyAt).getVigneronGeoloc().getGeolocCode() != null) {
-            holder.vhCp.setText(String.valueOf(parent.getList().get(keyAt).getVigneronGeoloc().getGeolocCode()));
+        if (parent.getList().get(keyAt).getVigneronGeoloc().getGeolocVille() != null) {
+            holder.vhCp.setText(String.valueOf(parent.getList().get(keyAt).getVigneronGeoloc().getGeolocVille().getVilleZipCode()));
 
         }
         holder.vhLayout.setTag("READ_" + parent.getList().get(keyAt).getVigneronId());

@@ -4,30 +4,40 @@ import android.os.Bundle;
 
 import com.example.dim.licence.utils.interfaces.EntityBundleInterface;
 
-import static com.example.dim.licence.utils.commons.Commons.GEOLOC_ADR;
-import static com.example.dim.licence.utils.commons.Commons.GEOLOC_CP;
+import static com.example.dim.licence.utils.commons.Commons.GEOLOC_ADR1;
+import static com.example.dim.licence.utils.commons.Commons.GEOLOC_ADR2;
+import static com.example.dim.licence.utils.commons.Commons.GEOLOC_ADR3;
+import static com.example.dim.licence.utils.commons.Commons.GEOLOC_COMPLEMENT;
 import static com.example.dim.licence.utils.commons.Commons.GEOLOC_ID;
-import static com.example.dim.licence.utils.commons.Commons.GEOLOC_PAYS;
 import static com.example.dim.licence.utils.commons.Commons.GEOLOC_VILLE;
 
 
 public class Geolocalisation implements EntityBundleInterface {
 
     private Long geolocId;
-    private String geolocPays;
-    private String geolocVille;
-    private String geolocCode;
-    private String geolocAdresse;
+    private Ville geolocVille;
+    private String geolocAdresse1;
+    private String geolocAdresse2;
+    private String geolocAdresse3;
+    private String geolocComplement;
 
     public Geolocalisation() {
+        geolocVille = new Ville();
     }
 
     public Geolocalisation( Bundle bundle) {
-        this.geolocId = bundle.getLong(GEOLOC_ID, 0);
-        this.geolocPays = bundle.getString(GEOLOC_PAYS, "");
-        this.geolocVille = bundle.getString(GEOLOC_VILLE, "");
-        this.geolocCode = bundle.getString(GEOLOC_CP, "");
-        this.geolocAdresse = bundle.getString(GEOLOC_ADR, "");
+        this.geolocVille = new Ville();
+        if (bundle != null) {
+            this.geolocId = bundle.getLong(GEOLOC_ID);
+            this.geolocAdresse1 = bundle.getString(GEOLOC_ADR1);
+            this.geolocAdresse2 = bundle.getString(GEOLOC_ADR2);
+            this.geolocAdresse3 = bundle.getString(GEOLOC_ADR3);
+            this.geolocComplement = bundle.getString(GEOLOC_COMPLEMENT);
+            if (bundle.getBundle(GEOLOC_VILLE) != null) {
+                this.geolocVille = new Ville(bundle.getBundle(GEOLOC_VILLE));
+            }
+
+        }
     }
 
     public Long getGeolocId() {
@@ -38,36 +48,44 @@ public class Geolocalisation implements EntityBundleInterface {
         this.geolocId = geolocId;
     }
 
-    public String getGeolocPays() {
-        return geolocPays;
-    }
-
-    public void setGeolocPays(String geolocPays) {
-        this.geolocPays = geolocPays;
-    }
-
-    public String getGeolocVille() {
+    public Ville getGeolocVille() {
         return geolocVille;
     }
 
-    public void setGeolocVille(String geolocVille) {
+    public void setGeolocVille(Ville geolocVille) {
         this.geolocVille = geolocVille;
     }
 
-    public String getGeolocCode() {
-        return geolocCode;
+    public String getGeolocAdresse1() {
+        return geolocAdresse1;
     }
 
-    public void setGeolocCode(String geolocCode) {
-        this.geolocCode = geolocCode;
+    public void setGeolocAdresse1(String geolocAdresse1) {
+        this.geolocAdresse1 = geolocAdresse1;
     }
 
-    public String getGeolocAdresse() {
-        return geolocAdresse;
+    public String getGeolocAdresse2() {
+        return geolocAdresse2;
     }
 
-    public void setGeolocAdresse(String geolocAdresse) {
-        this.geolocAdresse = geolocAdresse;
+    public void setGeolocAdresse2(String geolocAdresse2) {
+        this.geolocAdresse2 = geolocAdresse2;
+    }
+
+    public String getGeolocAdresse3() {
+        return geolocAdresse3;
+    }
+
+    public void setGeolocAdresse3(String geolocAdresse3) {
+        this.geolocAdresse3 = geolocAdresse3;
+    }
+
+    public String getGeolocComplement() {
+        return geolocComplement;
+    }
+
+    public void setGeolocComplement(String geolocComplement) {
+        this.geolocComplement = geolocComplement;
     }
 
     @Override
@@ -79,34 +97,38 @@ public class Geolocalisation implements EntityBundleInterface {
 
         if (geolocId != null ? !geolocId.equals(that.geolocId) : that.geolocId != null)
             return false;
-        if (geolocPays != null ? !geolocPays.equals(that.geolocPays) : that.geolocPays != null)
-            return false;
         if (geolocVille != null ? !geolocVille.equals(that.geolocVille) : that.geolocVille != null)
             return false;
-        if (geolocCode != null ? !geolocCode.equals(that.geolocCode) : that.geolocCode != null)
+        if (geolocAdresse1 != null ? !geolocAdresse1.equals(that.geolocAdresse1) : that.geolocAdresse1 != null)
             return false;
-        return geolocAdresse != null ? geolocAdresse.equals(that.geolocAdresse) : that.geolocAdresse == null;
+        if (geolocAdresse2 != null ? !geolocAdresse2.equals(that.geolocAdresse2) : that.geolocAdresse2 != null)
+            return false;
+        if (geolocAdresse3 != null ? !geolocAdresse3.equals(that.geolocAdresse3) : that.geolocAdresse3 != null)
+            return false;
+        return geolocComplement != null ? geolocComplement.equals(that.geolocComplement) : that.geolocComplement == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = geolocId != null ? geolocId.hashCode() : 0;
+        result = 31 * result + (geolocVille != null ? geolocVille.hashCode() : 0);
+        result = 31 * result + (geolocAdresse1 != null ? geolocAdresse1.hashCode() : 0);
+        result = 31 * result + (geolocAdresse2 != null ? geolocAdresse2.hashCode() : 0);
+        result = 31 * result + (geolocAdresse3 != null ? geolocAdresse3.hashCode() : 0);
+        result = 31 * result + (geolocComplement != null ? geolocComplement.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "Geolocalisation{" +
                 "geolocId=" + geolocId +
-                ", geolocPays='" + geolocPays + '\'' +
-                ", geolocVille='" + geolocVille + '\'' +
-                ", geolocCode='" + geolocCode + '\'' +
-                ", geolocAdresse='" + geolocAdresse + '\'' +
+                ", geolocVille=" + geolocVille +
+                ", geolocAdresse1='" + geolocAdresse1 + '\'' +
+                ", geolocAdresse2='" + geolocAdresse2 + '\'' +
+                ", geolocAdresse3='" + geolocAdresse3 + '\'' +
+                ", geolocComplement='" + geolocComplement + '\'' +
                 '}';
-    }
-
-    @Override
-    public int hashCode() {
-        int result = geolocId != null ? geolocId.hashCode() : 0;
-        result = 31 * result + (geolocPays != null ? geolocPays.hashCode() : 0);
-        result = 31 * result + (geolocVille != null ? geolocVille.hashCode() : 0);
-        result = 31 * result + (geolocCode != null ? geolocCode.hashCode() : 0);
-        result = 31 * result + (geolocAdresse != null ? geolocAdresse.hashCode() : 0);
-        return result;
     }
 
     @Override
@@ -115,11 +137,14 @@ public class Geolocalisation implements EntityBundleInterface {
         if (geolocId != null) {
             bundle.putLong(GEOLOC_ID, geolocId);
         }
+        bundle.putString(GEOLOC_ADR1, geolocAdresse1);
+        bundle.putString(GEOLOC_ADR2, geolocAdresse2);
+        bundle.putString(GEOLOC_ADR3, geolocAdresse3);
+        bundle.putString(GEOLOC_COMPLEMENT, geolocComplement);
+        if (geolocVille !=  null){
+            bundle.putBundle(GEOLOC_VILLE, geolocVille.entityToBundle());
+        }
 
-        bundle.putString(GEOLOC_PAYS, geolocPays);
-        bundle.putString(GEOLOC_VILLE, geolocVille);
-        bundle.putString(GEOLOC_CP, geolocCode);
-        bundle.putString(GEOLOC_ADR, geolocAdresse);
         return bundle;
     }
 }

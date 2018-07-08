@@ -3,16 +3,29 @@ package com.example.dim.licence.models;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.dim.licence.daos.ActionDAO;
+import com.example.dim.licence.daos.AppUserDAO;
+import com.example.dim.licence.daos.AppelationDAO;
+import com.example.dim.licence.daos.CaveDAO;
+import com.example.dim.licence.daos.DepartementDAO;
+import com.example.dim.licence.daos.GeolocalisationDAO;
+import com.example.dim.licence.daos.HistoriqueDAO;
+import com.example.dim.licence.daos.RegionDAO;
+import com.example.dim.licence.daos.TypeVinDAO;
+import com.example.dim.licence.daos.VigneronDAO;
+import com.example.dim.licence.daos.VilleDAO;
+import com.example.dim.licence.daos.VinDAO;
 import com.example.dim.licence.entities.AppUser;
 import com.example.dim.licence.entities.Appelation;
 import com.example.dim.licence.entities.Cave;
+import com.example.dim.licence.entities.Departement;
 import com.example.dim.licence.entities.TypeVin;
 import com.example.dim.licence.entities.Vigneron;
+import com.example.dim.licence.entities.Ville;
 
 import java.util.List;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
-import static com.example.dim.licence.models.DbHelper.MASTER_DATABASE_NAME;
 
 /**
  * This class defines actions allowed for master level (aka role in appUser table) users
@@ -20,33 +33,49 @@ import static com.example.dim.licence.models.DbHelper.MASTER_DATABASE_NAME;
 public class MasterModel extends AbstractModel {
 
     // STAYS PRIVATE !
-    private MasterModel(Context context, String dbName) {
-        super(context, dbName);
+    private MasterModel(Context context) {
+        super(context);
+        actionDAO = new ActionDAO();
+        appelationDAO = new AppelationDAO();
+        appUserDAO = new AppUserDAO();
+        caveDAO = new CaveDAO();
+        geolocalisationDAO = new GeolocalisationDAO();
+        historiqueDAO = new HistoriqueDAO();
+        typeVinDAO = new TypeVinDAO();
+        vigneronDAO = new VigneronDAO();
+        vinDAO = new VinDAO();
+        regionDAO = new RegionDAO();
+        departementDAO = new DepartementDAO();
+        villeDAO = new VilleDAO();
     }
 
     public static MasterModel getInstance(Context context) {
         if (model == null) {
-            model = new MasterModel(context, MASTER_DATABASE_NAME);
+            model = new MasterModel(context);
         }
         return model;
     }
 
+    public List<Ville> getAllVilles() {
+        return villeDAO.getAll(getReadableDatabase());
+    }
+
     public AppUser login(String mail, String pwd) {
-        long id = getAppUserDAO().getUserIdByCredentials(getReadableDatabase(), mail, pwd);
+        long id = appUserDAO.getUserIdByCredentials(getReadableDatabase(), mail, pwd);
         if (id == -1) {
             return null;
         }
-        return getAppUserDAO().getById(getReadableDatabase(), Integer.valueOf(String.valueOf(id)));
+        return appUserDAO.getById(getReadableDatabase(), Integer.valueOf(String.valueOf(id)));
     }
 
     public long createAccount(AppUser appUser) {
-        return getAppUserDAO().insert(getWritableDatabase(), appUser);
+        return appUserDAO.insert(getWritableDatabase(), appUser);
     }
 
     // CRUD FOR VIGNERON FULLY ALLOWED
     // INSERT / UPDATE / DELETE / GET BY ID / GET ALL
     public boolean insertVigneron(Vigneron vigneron) {
-        long id = getVigneronDAO().insert(getWritableDatabase(), vigneron);
+        long id = vigneronDAO.insert(getWritableDatabase(), vigneron);
 
         if (id == -1) {
             return false;
@@ -57,26 +86,54 @@ public class MasterModel extends AbstractModel {
     }
 
     public boolean updateVigneron(Vigneron vigneron) {
-        return getVigneronDAO().update(getWritableDatabase(), vigneron);
+        return vigneronDAO.update(getWritableDatabase(), vigneron);
     }
 
     public boolean deleteVigneron(Vigneron vigneron) {
-        return getVigneronDAO().delete(getWritableDatabase(), vigneron);
+        return vigneronDAO.delete(getWritableDatabase(), vigneron);
     }
 
     public Vigneron getVigneronByID(int vigneronId) {
-        return getVigneronDAO().getById(getReadableDatabase(), vigneronId);
+        return vigneronDAO.getById(getReadableDatabase(), vigneronId);
     }
 
     public List<Vigneron> getAllButDefaultVignerons() {
-        List<Vigneron> list = getVigneronDAO().getAll(getReadableDatabase());
+        List<Vigneron> list = vigneronDAO.getAll(getReadableDatabase());
         // important : remove default cave vigneron value
         list.remove(0); // remove Vigneron 'AUCUN' !
         return list;
     }
 
+    public Ville getVilleById(int id) {
+        return villeDAO.getById(getReadableDatabase(), id);
+    }
+
+    public Ville getVilleByLibelleAndZip(String libelle, String zip) {
+        return villeDAO.getByLibelleAndZip(getReadableDatabase(), libelle, zip);
+    }
+
+    public List<Ville> filterVilleByLibelle(String text) {
+        return villeDAO.filterByLibelle(getReadableDatabase(), text);
+    }
+
+    public List<Ville> filterVilleByZipCode(String text) {
+        return villeDAO.filterByZipCode(getReadableDatabase(), text);
+    }
+
+    public List<Ville> getFirst15Villes() {
+        return villeDAO.getFirst15(getReadableDatabase());
+    }
+
     public List<Vigneron> getAllVignerons() {
-        return getVigneronDAO().getAll(getReadableDatabase());
+        return vigneronDAO.getAll(getReadableDatabase());
+    }
+
+    public Departement getDepartmentById(int id) {
+        return departementDAO.getById(getReadableDatabase(), id);
+    }
+
+    public boolean insertVille(Ville ville) {
+           return villeDAO.insert(getWritableDatabase(), ville) > 0;
     }
 
 
@@ -84,9 +141,9 @@ public class MasterModel extends AbstractModel {
     // INSERT / UPDATE / DELETE / GET BY ID / GET ALL
     public boolean insertCave(Cave cave) {
         Log.i(ARG_DEBUG, "insertCave: CaveVigneron"+cave.getCaveVin().getVinVigneron());
-        long i = getVinDAO().insert(getWritableDatabase(), cave.getCaveVin());
+        long i = vinDAO.insert(getWritableDatabase(), cave.getCaveVin());
 
-        long id = getCaveDAO().oldInsert(getWritableDatabase(), cave, Integer.valueOf(String.valueOf(i)));
+        long id = caveDAO.oldInsert(getWritableDatabase(), cave, Integer.valueOf(String.valueOf(i)));
         //long id = getCaveDAO().insert(getWritableDatabase(), cave);
 
         if (id == -1) {
@@ -99,31 +156,33 @@ public class MasterModel extends AbstractModel {
         return true;
     }
 
+    public boolean isVillesEmpty() {
+        return villeDAO.isEmpty(getReadableDatabase());
+    }
 
     public boolean updateCave(Cave cave) {
-        return getCaveDAO().update(getWritableDatabase(), cave);
+        return caveDAO.update(getWritableDatabase(), cave);
     }
 
     public boolean deleteCave(Cave cave) {
-        return getCaveDAO().delete(getWritableDatabase(), cave);
+        return caveDAO.delete(getWritableDatabase(), cave);
     }
 
     public Cave getCaveByID(int caveId) {
-        return getCaveDAO().getById(getReadableDatabase(), caveId);
+        return caveDAO.getById(getReadableDatabase(), caveId);
     }
 
     public List<Cave> getAllCave() {
-        return getCaveDAO().getAll(getReadableDatabase());
+        return caveDAO.getAll(getReadableDatabase());
     }
 
     // DICTIONARRY DATA ACCESS
     public List<TypeVin> getAllTypeVins(){
-        return getTypeVinDAO().getAll(getReadableDatabase());
+        return typeVinDAO.getAll(getReadableDatabase());
     }
 
     public List<Appelation> getAllAppelations() {
-        return getAppelationDAO().getAll(getReadableDatabase());
+        return appelationDAO.getAll(getReadableDatabase());
     }
-
 
 }

@@ -23,7 +23,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:columnCount="2"
-            android:rowCount="11">
+            android:rowCount="12">
 
 
                 <TextView
@@ -135,26 +135,8 @@
                 android:textColor="@color/colorBlack"/>
 
             <TextView
-                android:id="@+id/dtl_vigneron_pays_desc"
-                android:layout_row="6"
-                android:layout_column="0"
-                android:layout_margin="5dp"
-                android:layout_gravity="end"
-                android:textSize="20sp"
-                android:text="@string/pays"/>
-
-            <TextView
-                android:id="@+id/dtl_vigneron_pays_value"
-                android:layout_row="6"
-                android:layout_column="1"
-                android:layout_margin="5dp"
-                android:layout_gravity="start"
-                android:textSize="20sp"
-                android:textColor="@color/colorBlack"/>
-
-            <TextView
                 android:id="@+id/dtl_vigneron_ville_desc"
-                android:layout_row="7"
+                android:layout_row="6"
                 android:layout_column="0"
                 android:layout_margin="5dp"
                 android:layout_gravity="end"
@@ -163,6 +145,24 @@
 
             <TextView
                 android:id="@+id/dtl_vigneron_ville_value"
+                android:layout_row="6"
+                android:layout_column="1"
+                android:layout_margin="5dp"
+                android:layout_gravity="start"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/dtl_vigneron_adresse1_desc"
+                android:layout_row="7"
+                android:layout_column="0"
+                android:layout_margin="5dp"
+                android:layout_gravity="end"
+                android:textSize="20sp"
+                android:text="@string/codepost"/>
+
+            <TextView
+                android:id="@+id/dtl_vigneron_adresse1_value"
                 android:layout_row="7"
                 android:layout_column="1"
                 android:layout_margin="5dp"
@@ -171,16 +171,16 @@
                 android:textColor="@color/colorBlack"/>
 
             <TextView
-                android:id="@+id/dtl_vigneron_code_desc"
+                android:id="@+id/dtl_vigneron_adresse2_desc"
                 android:layout_row="8"
                 android:layout_column="0"
                 android:layout_margin="5dp"
                 android:layout_gravity="end"
                 android:textSize="20sp"
-                android:text="@string/codepost"/>
+                android:text="@string/adresse"/>
 
             <TextView
-                android:id="@+id/dtl_vigneron_code_value"
+                android:id="@+id/dtl_vigneron_adresse2_value"
                 android:layout_row="8"
                 android:layout_column="1"
                 android:layout_margin="5dp"
@@ -189,7 +189,7 @@
                 android:textColor="@color/colorBlack"/>
 
             <TextView
-                android:id="@+id/dtl_vigneron_adresse_desc"
+                android:id="@+id/dtl_vigneron_adresse3_desc"
                 android:layout_row="9"
                 android:layout_column="0"
                 android:layout_margin="5dp"
@@ -198,8 +198,26 @@
                 android:text="@string/adresse"/>
 
             <TextView
-                android:id="@+id/dtl_vigneron_adresse_value"
+                android:id="@+id/dtl_vigneron_adresse3_value"
                 android:layout_row="9"
+                android:layout_column="1"
+                android:layout_margin="5dp"
+                android:layout_gravity="start"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/dtl_vigneron_complement_desc"
+                android:layout_row="10"
+                android:layout_column="0"
+                android:layout_margin="5dp"
+                android:layout_gravity="end"
+                android:textSize="20sp"
+                android:text="@string/complement"/>
+
+            <TextView
+                android:id="@+id/dtl_vigneron_complement_value"
+                android:layout_row="10"
                 android:layout_column="1"
                 android:layout_margin="5dp"
                 android:layout_gravity="start"
@@ -208,7 +226,7 @@
 
         <TextView
                 android:id="@+id/dtl_vigneron_comment_desc"
-                android:layout_row="10"
+                android:layout_row="11"
                 android:layout_column="0"
                 android:layout_margin="5dp"
                 android:layout_gravity="end"
@@ -217,7 +235,7 @@
 
             <TextView
                 android:id="@+id/dtl_vigneron_comment_value"
-                android:layout_row="10"
+                android:layout_row="11"
                 android:layout_column="1"
                 android:layout_margin="5dp"
                 android:layout_gravity="start"

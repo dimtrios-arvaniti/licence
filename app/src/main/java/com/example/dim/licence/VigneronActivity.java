@@ -73,6 +73,7 @@ public class VigneronActivity extends AppCompatActivity
      * Bundle containing data
      */
     private Bundle vigneronsBundle;
+    private Bundle dictionnaryData;
     /**
      * Accessor to DAOS
      */
@@ -218,6 +219,21 @@ public class VigneronActivity extends AppCompatActivity
         vigneronsBundle.putInt(V_SELECTED, -1);
         vigneronsBundle.putString(V_FILTER_TYPE, "NONE"); // remove line
 
+/*        // to much data to do this by bundles !!
+
+        dictionnaryData = new Bundle();
+        vIndex = 0;
+        List<Ville> villes = model.getAllVilles();
+        if (villes != null) {
+            for (Ville ville : villes) {
+                //Log.i(ARG_DEBUG, "initVigneronsData: VILLE "+ville.toString());
+                dictionnaryData.putBundle("VILLE_"+vIndex, ville.entityToBundle());
+                vIndex+=1;
+            }
+        }
+        dictionnaryData.putInt("VILLE_COUNT", vIndex);
+*/
+
         // init some settings for pager
         newMode = false;
         currentPage = 0;
@@ -314,7 +330,7 @@ public class VigneronActivity extends AppCompatActivity
                 setResult(RESULT_OK, data);
                 // close the activity
                 finish();
-               // return;
+                // return;
             }
 
             goToPage(1);
@@ -391,11 +407,8 @@ public class VigneronActivity extends AppCompatActivity
         v_selected = vigneron;
 
 
-        if (v_selected.getVigneronGeoloc().getGeolocPays().isEmpty()
-                && v_selected.getVigneronGeoloc().getGeolocPays().isEmpty()
-                && v_selected.getVigneronGeoloc().getGeolocVille().isEmpty()
-                && v_selected.getVigneronGeoloc().getGeolocCode().isEmpty()) {
-            Toast.makeText(this, "Aucune donnée n'à été renseigné pour permettre la localisation ", Toast.LENGTH_SHORT).show();
+        if (v_selected.getVigneronGeoloc().getGeolocVille() == null) {
+            Toast.makeText(this, "Aucune ville n'à été renseigné pour permettre la localisation ", Toast.LENGTH_SHORT).show();
             return;
         } else {
             Log.i(ARG_DEBUG, "onLocateClick: ");
@@ -425,28 +438,43 @@ public class VigneronActivity extends AppCompatActivity
     private String buildMapIntentUri() {
         StringBuilder uriStringBuilder = new StringBuilder();
         uriStringBuilder.append("geo:0,0?q=");
-        for (String stra : v_selected.getVigneronGeoloc().getGeolocAdresse().split(" ")) {
+        for (String stra : v_selected.getVigneronGeoloc().getGeolocVille().getVilleLibelle().split(" ")) {
             uriStringBuilder.append(stra);
             uriStringBuilder.append("+");
         }
         replaceLastCharBy(uriStringBuilder, "+", ",");
 
-        for (String stra : v_selected.getVigneronGeoloc().getGeolocVille().split(" ")) {
-            uriStringBuilder.append(stra);
-            uriStringBuilder.append("+");
-        }
-        replaceLastCharBy(uriStringBuilder, "+", ",");
-
-        if (!v_selected.getVigneronGeoloc().getGeolocCode().isEmpty()) {
-            uriStringBuilder.append(v_selected.getVigneronGeoloc().getGeolocCode())
-                    .append(",");
+        if (!v_selected.getVigneronGeoloc().getGeolocComplement().isEmpty()) {
+            for (String stra : v_selected.getVigneronGeoloc().getGeolocComplement().split(" ")) {
+                uriStringBuilder.append(stra);
+                uriStringBuilder.append("+");
+            }
         }
 
-        if (!v_selected.getVigneronGeoloc().getGeolocPays().isEmpty()) {
-            uriStringBuilder.append(v_selected.getVigneronGeoloc().getGeolocPays());
-        } else {
-            replaceLastCharBy(uriStringBuilder, ",", " ");
+        if (!v_selected.getVigneronGeoloc().getGeolocAdresse1().isEmpty()) {
+            for (String stra : v_selected.getVigneronGeoloc().getGeolocAdresse1().split(" ")) {
+                uriStringBuilder.append(stra);
+                uriStringBuilder.append("+");
+            }
         }
+
+        if (!v_selected.getVigneronGeoloc().getGeolocAdresse2().isEmpty()) {
+            for (String stra : v_selected.getVigneronGeoloc().getGeolocAdresse2().split(" ")) {
+                uriStringBuilder.append(stra);
+                uriStringBuilder.append("+");
+            }
+        }
+
+        if (!v_selected.getVigneronGeoloc().getGeolocAdresse3().isEmpty()) {
+            for (String stra : v_selected.getVigneronGeoloc().getGeolocAdresse3().split(" ")) {
+                uriStringBuilder.append(stra);
+                uriStringBuilder.append("+");
+            }
+        }
+
+        replaceLastCharBy(uriStringBuilder, "+", " ");
+
+
         return uriStringBuilder.toString();
     }
 

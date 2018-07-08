@@ -13,6 +13,9 @@ public class DbHelper {
     // TABLES
     public static final String TABLE_ACTION = "action";
     public static final String TABLE_APPELATION = "appelation";
+    public static final String TABLE_REGION = "region";
+    public static final String TABLE_DEPARTEMENT = "departement";
+    public static final String TABLE_VILLE = "ville";
     public static final String TABLE_TYPEVIN = "typevin";
     public static final String TABLE_CAVE = "cave";
     public static final String TABLE_GEOLOCALISATION = "geolocalisation";
@@ -27,12 +30,12 @@ public class DbHelper {
     // ACTION
     public static final String KEY_ACTION_ID = "action_id";
     public static final String KEY_ACTION_LIBELLE = "action_libelle";
-    // DOMAINE
 
+    // DOMAINE
     public static final String KEY_APPELATION_ID = "appel_id";
     public static final String KEY_APPELATION_LIBELLE = "appel_libelle";
-    // TYPEVIN
 
+    // TYPEVIN
     public static final String KEY_TYPEVIN_ID = "typvin_id";
     public static final String KEY_TYPEVIN_LIBELLE = "typvin_libelle";
 
@@ -50,12 +53,30 @@ public class DbHelper {
     public static final String KEY_CAVE_QUANTITE = "cave_quantite";
     public static final String KEY_CAVE_FAVORIS = "cave_favoris";
 
+    // REGION
+    public static final String KEY_REGION_ID = "region_id";
+    public static final String KEY_REGION_LIBELLE = "region_libelle";
+
+    // DEPARTEMENT
+    public static final String KEY_DEPARTEMENT_ID = "dptt_id";
+    public static final String KEY_DEPARTEMENT_LIBELLE = "dptt_libelle";
+    public static final String KEY_DEPARTEMENT_REGION = "dptt_region";
+
+    // VILLE
+    public static final String KEY_VILLE_ID = "ville_id";
+    public static final String KEY_VILLE_LIBELLE = "ville_libelle";
+    public static final String KEY_VILLE_ZIP_CODE = "ville_zip_code";
+    public static final String KEY_VILLE_LONGITUDE = "ville_longitude";
+    public static final String KEY_VILLE_LATITUDE = "ville_latitude";
+    public static final String KEY_VILLE_DEPARTEMENT = "ville_departement";
+
     // GEOLOCALISATION
     public static final String KEY_GEOLOC_ID = "geoloc_id";
-    public static final String KEY_GEOLOC_PAYS = "geoloc_pays";
     public static final String KEY_GEOLOC_VILLE = "geoloc_ville";
-    public static final String KEY_GEOLOC_CODE = "geoloc_code";
-    public static final String KEY_GEOLOC_ADRESSE = "geoloc_adresse";
+    public static final String KEY_GEOLOC_ADRESSE1 = "geoloc_adresse1";
+    public static final String KEY_GEOLOC_ADRESSE2 = "geoloc_adresse2";
+    public static final String KEY_GEOLOC_ADRESSE3 = "geoloc_adresse3";
+    public static final String KEY_GEOLOC_COMPLEMENT = "geoloc_complement";
 
     // HISTORIQUE
     public static final String KEY_HISTORIQUE_ID = "histor_id";
@@ -82,14 +103,11 @@ public class DbHelper {
     public static final String KEY_VIN_LIBELLE = "vin_libelle";
     public static final String KEY_VIN_IMAGE = "vin_image";
     public static final String KEY_VIN_APPELATION = "vin_appelation";
-    //public static final String KEY_VIN_DOMAINE = "vin_domaine";
     public static final String KEY_VIN_VIGNERON = "vin_vigneron";
     public static final String KEY_VIN_TYPE = "vin_type";
     public static final String KEY_VIN_ANNEE = "vin_annee";
     public static final String KEY_VIN_PRIX = "vin_prix";
     public static final String KEY_VIN_ANNEEMAX = "vin_anneemax";
-   // public static final String KEY_VIN_FAVORIS = "vin_favoris";
-   // public static final String KEY_VIN_QUANTITE = "vin_quantite";
     public static final String KEY_VIN_COMMENTAIRE = "vin_comment";
 
     // ---------------------------------------------------------------------------------------------
@@ -99,6 +117,27 @@ public class DbHelper {
     public static final String CREATE_TABLE_ACTION = "CREATE TABLE " + TABLE_ACTION + " ("
             + KEY_ACTION_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
             + KEY_ACTION_LIBELLE + " TEXT NOT NULL);";
+
+    public static final String CREATE_TABLE_REGION = "CREATE TABLE " + TABLE_REGION + " ("
+            + KEY_REGION_ID +" INTEGER PRIMARY KEY, "
+            + KEY_REGION_LIBELLE + " TEXT NOT NULL);";
+
+    public static final String CREATE_TABLE_DEPARTEMENT = "CREATE TABLE " + TABLE_DEPARTEMENT + " ("
+            + KEY_DEPARTEMENT_ID +" INTEGER PRIMARY KEY, "
+            + KEY_DEPARTEMENT_LIBELLE + " TEXT NOT NULL, "
+            + KEY_DEPARTEMENT_REGION + " INTEGER, "
+            + " FOREIGN KEY (" + KEY_DEPARTEMENT_REGION + ") REFERENCES "
+            + TABLE_REGION + "(" + KEY_REGION_ID + ")); ";
+
+    public static final String CREATE_TABLE_VILLE= "CREATE TABLE " + TABLE_VILLE + " ("
+            + KEY_VILLE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + KEY_VILLE_LIBELLE + " TEXT NOT NULL collate nocase, "
+            + KEY_VILLE_ZIP_CODE + " TEXT, "
+            + KEY_VILLE_LATITUDE + " TEXT, "
+            + KEY_VILLE_LONGITUDE + " TEXT, "
+            + KEY_VILLE_DEPARTEMENT + " INTEGER NOT NULL, "
+            + " FOREIGN KEY (" + KEY_VILLE_DEPARTEMENT + ") REFERENCES "
+            + TABLE_DEPARTEMENT + "(" + KEY_DEPARTEMENT_ID + ")); ";
 
     public static final String CREATE_TABLE_DOMAINE = "CREATE TABLE " + TABLE_APPELATION + " ("
             + KEY_APPELATION_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -118,10 +157,13 @@ public class DbHelper {
 
     public static final String CREATE_TABLE_GEOLOCALISATION = "CREATE TABLE " + TABLE_GEOLOCALISATION + " ("
             + KEY_GEOLOC_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + KEY_GEOLOC_PAYS + " TEXT(200) DEFAULT '', "
-            + KEY_GEOLOC_VILLE + " TEXT(200) DEFAULT '', "
-            + KEY_GEOLOC_CODE + " TEXT(20) DEFAULT '', "
-            + KEY_GEOLOC_ADRESSE + " TEXT(500) DEFAULT '');";
+            + KEY_GEOLOC_VILLE + " INTEGER, "
+            + KEY_GEOLOC_ADRESSE1 + " TEXT (200) DEFAULT '', "
+            + KEY_GEOLOC_ADRESSE2 + " TEXT(200) DEFAULT '', "
+            + KEY_GEOLOC_ADRESSE3 + " TEXT(200) DEFAULT '', "
+            + KEY_GEOLOC_COMPLEMENT + " TEXT (3)  DEFAULT '', "
+            + " FOREIGN KEY (" + KEY_GEOLOC_VILLE + ") REFERENCES "
+            + TABLE_VILLE + "(" + KEY_VILLE_ID + ")); ";
 
     public static final String CREATE_TABLE_CAVE = "CREATE TABLE "+TABLE_CAVE+ " ( "
             + KEY_CAVE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -191,5 +233,147 @@ public class DbHelper {
     public static final String DROP_TABLE_HISTORIQUE = "DROP TABLE " + TABLE_HISTORIQUE +";";
     public static final String DROP_TABLE_VIGNERON = "DROP TABLE " + TABLE_VIGNERON +";";
     public static final String DROP_TABLE_VIN = "DROP TABLE " + TABLE_VIN +";";
+    public static final String DROP_TABLE_VILLE = "DROP TABLE " + TABLE_VILLE +";";
+    public static final String DROP_TABLE_REGION = "DROP TABLE " + TABLE_REGION +";";
+    public static final String DROP_TABLE_DEPARTEMENT = "DROP TABLE " + TABLE_DEPARTEMENT +";";
+
+
+    public static final String REGION_RAW_INSERT = "INSERT INTO "+ TABLE_REGION + " VALUES "
+            + "(0, 'OUTRE MER'), "
+            + "(1, 'GUADELOUPE'), "
+            + "(2, 'MARTINIQUE'), "
+            + "(3, 'GUYANE'), "
+            + "(4, 'LA REUNION'), "
+            + "(11, 'ILE-DE-FRANCE'), "
+            + "(21, 'CHAMPAGNE-ARDENNE'), "
+            + "(22, 'PICARDIE'), "
+            + "(23, 'HAUTE-NORMANDIE'), "
+            + "(24, 'CENTRE'), "
+            + "(25, 'BASSE-NORMANDIE'), "
+            + "(26, 'BOURGOGNE'), "
+            + "(31, 'NORD-PAS-DE-CALAIS'), "
+            + "(41, 'LORRAINE'), "
+            + "(42, 'ALSACE'), "
+            + "(43, 'FRANCHE-COMTE'), "
+            + "(52, 'PAYS DE LA LOIRE'), "
+            + "(53, 'BRETAGNE'), "
+            + "(54, 'POITOU-CHARENTES'), "
+            + "(72, 'AQUITAINE'), "
+            + "(73, 'MIDI-PYRENEES'), "
+            + "(74, 'LIMOUSIN'), "
+            + "(82, 'RHONE-ALPES'), "
+            + "(83, 'AUVERGNE'), "
+            + "(91, 'LANGUEDOC-ROUSSILLON'), "
+            + "(93, 'PROVENCE-ALPES-COTE D''AZUR'), "
+            + "(94, 'CORSE')"
+            +";";
+
+    public static final String DEPARTEMENT_RAW_INSERT = "INSERT INTO "+ TABLE_DEPARTEMENT + " VALUES "
+            + "(01,82,'AIN'), "
+            + "(02,22,'AISNE'), "
+            + "(03,83,'ALLIER'), "
+            + "(04,93,'ALPES-DE-HAUTE-PROVENCE'), "
+            + "(05,93,'HAUTES-ALPES'), "
+            + "(06,93,'ALPES-MARITIMES'), "
+            + "(07,82,'ARDECHE'), "
+            + "(08,21,'ARDENNES'), "
+            + "(09,73,'ARIEGE'), "
+            + "(10,21,'AUBE'), "
+            + "(11,91,'AUDE'), "
+            + "(12,73,'AVEYRON'), "
+            + "(13,93,'BOUCHES-DU-RHONE'), "
+            + "(14,25,'CALVADOS'), "
+            + "(15,83,'CANTAL'), "
+            + "(16,54,'CHARENTE'), "
+            + "(17,54,'CHARENTE-MARITIME'), "
+            + "(18,24,'CHER'), "
+            + "(19,74,'CORREZE'), "
+            + "(21,26,'COTE-D''OR'), "
+            + "(22,53,'COTES-D''ARMOR'), "
+            + "(23,74,'CREUSE'), "
+            + "(24,72,'DORDOGNE'), "
+            + "(25,43,'DOUBS'), "
+            + "(26,82,'DROME'), "
+            + "(27,23,'EURE'), "
+            + "(28,24,'EURE-ET-LOIR'), "
+            + "(29,53,'FINISTERE'), "
+            + "(30,91,'GARD'), "
+            + "(31,73,'HAUTE-GARONNE'), "
+            + "(32,73,'GERS'), "
+            + "(33,72,'GIRONDE'), "
+            + "(34,91,'HERAULT'), "
+            + "(35,53,'ILLE-ET-VILAINE'), "
+            + "(36,24,'INDRE'), "
+            + "(37,24,'INDRE-ET-LOIRE'), "
+            + "(38,82,'ISERE'), "
+            + "(39,43,'JURA'), "
+            + "(40,72,'LANDES'), "
+            + "(41,24,'LOIR-ET-CHER'), "
+            + "(42,82,'LOIRE'), "
+            + "(43,83,'HAUTE-LOIRE'), "
+            + "(44,52,'LOIRE-ATLANTIQUE'), "
+            + "(45,24,'LOIRET'), "
+            + "(46,73,'LOT'), "
+            + "(47,72,'LOT-ET-GARONNE'), "
+            + "(48,91,'LOZERE'), "
+            + "(49,52,'MAINE-ET-LOIRE'), "
+            + "(50,25,'MANCHE'), "
+            + "(51,21,'MARNE'), "
+            + "(52,21,'HAUTE-MARNE'), "
+            + "(53,52,'MAYENNE'), "
+            + "(54,41,'MEURTHE-ET-MOSELLE'), "
+            + "(55,41,'MEUSE'), "
+            + "(56,53,'MORBIHAN'), "
+            + "(57,41,'MOSELLE'), "
+            + "(58,26,'NIEVRE'), "
+            + "(59,31,'NORD'), "
+            + "(60,22,'OISE'), "
+            + "(61,25,'ORNE'), "
+            + "(62,31,'PAS-DE-CALAIS'), "
+            + "(63,83,'PUY-DE-DOME'), "
+            + "(64,72,'PYRENEES-ATLANTIQUES'), "
+            + "(65,73,'HAUTES-PYRENEES'), "
+            + "(66,91,'PYRENEES-ORIENTALES'), "
+            + "(67,42,'BAS-RHIN'), "
+            + "(68,42,'HAUT-RHIN'), "
+            + "(69,82,'RHONE'), "
+            + "(70,43,'HAUTE-SAONE'), "
+            + "(71,26,'SAONE-ET-LOIRE'), "
+            + "(72,52,'SARTHE'), "
+            + "(73,82,'SAVOIE'), "
+            + "(74,82,'HAUTE-SAVOIE'), "
+            + "(75,11,'PARIS'), "
+            + "(76,23,'SEINE-MARITIME'), "
+            + "(77,11,'SEINE-ET-MARNE'), "
+            + "(78,11,'YVELINES'), "
+            + "(79,54,'DEUX-SEVRES'), "
+            + "(80,22,'SOMME'), "
+            + "(81,73,'TARN'), "
+            + "(82,73,'TARN-ET-GARONNE'), "
+            + "(83,93,'VAR'), "
+            + "(84,93,'VAUCLUSE'), "
+            + "(85,52,'VENDEE'), "
+            + "(86,54,'VIENNE'), "
+            + "(87,74,'HAUTE-VIENNE'), "
+            + "(88,41,'VOSGES'), "
+            + "(89,26,'YONNE'), "
+            + "(90,43,'TERRITOIRE DE BELFORT'), "
+            + "(91,11,'ESSONNE'), "
+            + "(92,11,'HAUTS-DE-SEINE'), "
+            + "(93,11,'SEINE-SAINT-DENIS'), "
+            + "(94,11,'VAL-DE-MARNE'), "
+            + "(95,11,'VAL-D''OISE'), "
+            + "(210,94,'CORSE-DU-SUD'), "
+            + "(211,94,'HAUTE-CORSE'), "
+            + "(971,01,'GUADELOUPE'), "
+            + "(972,02,'MARTINIQUE'), "
+            + "(973,03,'GUYANE'), "
+            + "(974,04,'LA REUNION'), "
+            + "(975,00,'ST PIERRE ET MIQUELON'), "
+            + "(976,00,'MAYOTTE'), "
+            + "(986,00,'WALLIS ET FUTUNA'), "
+            + "(987,00,'POLYNÉSIE FRANÇAISE'), "
+            + "(988,00,'NOUVELLE CALÉDONIE') "
+            + ";";
 
 }

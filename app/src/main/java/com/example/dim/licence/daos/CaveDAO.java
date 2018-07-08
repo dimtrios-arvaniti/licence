@@ -7,9 +7,12 @@ import android.util.Log;
 
 import com.example.dim.licence.entities.Appelation;
 import com.example.dim.licence.entities.Cave;
+import com.example.dim.licence.entities.Departement;
 import com.example.dim.licence.entities.Geolocalisation;
+import com.example.dim.licence.entities.Region;
 import com.example.dim.licence.entities.TypeVin;
 import com.example.dim.licence.entities.Vigneron;
+import com.example.dim.licence.entities.Ville;
 import com.example.dim.licence.entities.Vin;
 
 import java.text.ParseException;
@@ -23,11 +26,17 @@ import static com.example.dim.licence.models.DbHelper.KEY_CAVE_FAVORIS;
 import static com.example.dim.licence.models.DbHelper.KEY_CAVE_ID;
 import static com.example.dim.licence.models.DbHelper.KEY_CAVE_QUANTITE;
 import static com.example.dim.licence.models.DbHelper.KEY_CAVE_VIN;
-import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_ADRESSE;
-import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_CODE;
+import static com.example.dim.licence.models.DbHelper.KEY_DEPARTEMENT_ID;
+import static com.example.dim.licence.models.DbHelper.KEY_DEPARTEMENT_LIBELLE;
+import static com.example.dim.licence.models.DbHelper.KEY_DEPARTEMENT_REGION;
+import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_ADRESSE1;
+import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_ADRESSE2;
+import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_ADRESSE3;
+import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_COMPLEMENT;
 import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_ID;
-import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_PAYS;
 import static com.example.dim.licence.models.DbHelper.KEY_GEOLOC_VILLE;
+import static com.example.dim.licence.models.DbHelper.KEY_REGION_ID;
+import static com.example.dim.licence.models.DbHelper.KEY_REGION_LIBELLE;
 import static com.example.dim.licence.models.DbHelper.KEY_TYPEVIN_ID;
 import static com.example.dim.licence.models.DbHelper.KEY_TYPEVIN_LIBELLE;
 import static com.example.dim.licence.models.DbHelper.KEY_VIGNERON_COMMENTAIRE;
@@ -39,6 +48,12 @@ import static com.example.dim.licence.models.DbHelper.KEY_VIGNERON_ID;
 import static com.example.dim.licence.models.DbHelper.KEY_VIGNERON_LIBELLE;
 import static com.example.dim.licence.models.DbHelper.KEY_VIGNERON_MAIL;
 import static com.example.dim.licence.models.DbHelper.KEY_VIGNERON_MOBILE;
+import static com.example.dim.licence.models.DbHelper.KEY_VILLE_DEPARTEMENT;
+import static com.example.dim.licence.models.DbHelper.KEY_VILLE_ID;
+import static com.example.dim.licence.models.DbHelper.KEY_VILLE_LATITUDE;
+import static com.example.dim.licence.models.DbHelper.KEY_VILLE_LIBELLE;
+import static com.example.dim.licence.models.DbHelper.KEY_VILLE_LONGITUDE;
+import static com.example.dim.licence.models.DbHelper.KEY_VILLE_ZIP_CODE;
 import static com.example.dim.licence.models.DbHelper.KEY_VIN_ANNEE;
 import static com.example.dim.licence.models.DbHelper.KEY_VIN_ANNEEMAX;
 import static com.example.dim.licence.models.DbHelper.KEY_VIN_APPELATION;
@@ -51,9 +66,12 @@ import static com.example.dim.licence.models.DbHelper.KEY_VIN_TYPE;
 import static com.example.dim.licence.models.DbHelper.KEY_VIN_VIGNERON;
 import static com.example.dim.licence.models.DbHelper.TABLE_APPELATION;
 import static com.example.dim.licence.models.DbHelper.TABLE_CAVE;
+import static com.example.dim.licence.models.DbHelper.TABLE_DEPARTEMENT;
 import static com.example.dim.licence.models.DbHelper.TABLE_GEOLOCALISATION;
+import static com.example.dim.licence.models.DbHelper.TABLE_REGION;
 import static com.example.dim.licence.models.DbHelper.TABLE_TYPEVIN;
 import static com.example.dim.licence.models.DbHelper.TABLE_VIGNERON;
+import static com.example.dim.licence.models.DbHelper.TABLE_VILLE;
 import static com.example.dim.licence.models.DbHelper.TABLE_VIN;
 import static com.example.dim.licence.utils.commons.Commons.vinDateFormat;
 
@@ -322,54 +340,167 @@ public class CaveDAO implements BaseDAO<Cave> {
         }
         return typeVin;
     }
+    public Vigneron getVigneronById(SQLiteDatabase sqLiteDatabase, long itemId) {
 
+        Cursor cursor = sqLiteDatabase.query(TABLE_VIGNERON,
+                new String[]{KEY_VIGNERON_ID, KEY_VIGNERON_LIBELLE, KEY_VIGNERON_DOMAINE,
+                        KEY_VIGNERON_FIXE, KEY_VIGNERON_MOBILE, KEY_VIGNERON_MAIL, KEY_VIGNERON_FAX,
+                        KEY_VIGNERON_GEOLOCALISATION, KEY_VIGNERON_COMMENTAIRE},
+                KEY_VIGNERON_ID + " = ?",
+                new String[]{String.valueOf(itemId)},
+                null, null, null);
 
-    private Geolocalisation getGeolocalisationById(SQLiteDatabase sqLiteDatabase, long id) {
-        Geolocalisation geoloc = null;
-        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_GEOLOCALISATION + " WHERE " + KEY_GEOLOC_ID + " = ?", new String[]{String.valueOf(id)});
-
-        if (c != null) {
-            c.moveToFirst();
-
-            geoloc = new Geolocalisation();
-            geoloc.setGeolocId(c.getLong(c.getColumnIndex(KEY_GEOLOC_ID)));
-            geoloc.setGeolocPays(c.getString(c.getColumnIndex(KEY_GEOLOC_PAYS)));
-            geoloc.setGeolocVille(c.getString(c.getColumnIndex(KEY_GEOLOC_VILLE)));
-            geoloc.setGeolocCode(c.getString(c.getColumnIndex(KEY_GEOLOC_CODE)));
-            geoloc.setGeolocAdresse(c.getString(c.getColumnIndex(KEY_GEOLOC_ADRESSE)));
-
-            c.close();
-        }
-        return geoloc;
-    }
-
-
-    private Vigneron getVigneronById(SQLiteDatabase sqLiteDatabase, long id) {
         Vigneron vigneron = null;
-        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_VIGNERON + " WHERE " + KEY_VIGNERON_ID + " = ?", new String[]{String.valueOf(id)});
 
-        if (c != null) {
-            c.moveToFirst();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int rowNbr = 0;
+                Geolocalisation geoloc = null;
 
-            vigneron = new Vigneron();
-            vigneron.setVigneronId(c.getLong(c.getColumnIndex(KEY_VIGNERON_ID)));
-            vigneron.setVigneronComment(c.getString(c.getColumnIndex(KEY_VIGNERON_COMMENTAIRE)));
+                do {
+                    vigneron = new Vigneron();
+                    vigneron.setVigneronId(cursor.getLong(cursor.getColumnIndex(KEY_VIGNERON_ID)));
+                    vigneron.setVigneronLibelle(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_LIBELLE)));
+                    vigneron.setVigneronDomaine(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_DOMAINE)));
+                    vigneron.setVigneronFixe(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_FIXE)));
+                    vigneron.setVigneronMobile(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_MOBILE)));
+                    vigneron.setVigneronMail(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_MAIL)));
+                    vigneron.setVigneronFax(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_FAX)));
+                    vigneron.setVigneronComment(cursor.getString(cursor.getColumnIndex(KEY_VIGNERON_COMMENTAIRE)));
 
-            Geolocalisation geoloc = getGeolocalisationById(sqLiteDatabase,
-                    c.getLong(c.getColumnIndex(KEY_VIGNERON_GEOLOCALISATION)));
-            vigneron.setVigneronGeoloc(geoloc);
+                    geoloc = getGeolocalisationById(sqLiteDatabase, cursor.getInt(cursor.getColumnIndex(KEY_VIGNERON_ID)));
+                    vigneron.setVigneronGeoloc(geoloc);
 
-            vigneron.setVigneronMail(c.getString(c.getColumnIndex(KEY_VIGNERON_MAIL)));
-            vigneron.setVigneronFax(c.getString(c.getColumnIndex(KEY_VIGNERON_FAX)));
-            vigneron.setVigneronFixe(c.getString(c.getColumnIndex(KEY_VIGNERON_FIXE)));
-            vigneron.setVigneronMobile(c.getString(c.getColumnIndex(KEY_VIGNERON_MOBILE)));
-            vigneron.setVigneronDomaine(c.getString(c.getColumnIndex(KEY_VIGNERON_DOMAINE)));
-            vigneron.setVigneronLibelle(c.getString(c.getColumnIndex(KEY_VIGNERON_LIBELLE)));
+                    Log.i(ARG_DEBUG, "getAll: " + vigneron.toString());
+                } while (cursor.moveToNext());
+            }
 
-            c.close();
+            cursor.close();
         }
+
         return vigneron;
     }
 
+    public Geolocalisation getGeolocalisationById(SQLiteDatabase sqLiteDatabase, int itemId) {
+        Geolocalisation geolocalisation = null;
+
+        Cursor cursor = sqLiteDatabase.query(TABLE_GEOLOCALISATION,
+                new String[]{KEY_GEOLOC_ID, KEY_GEOLOC_VILLE, KEY_GEOLOC_ADRESSE1,
+                        KEY_GEOLOC_ADRESSE2, KEY_GEOLOC_ADRESSE3, KEY_GEOLOC_COMPLEMENT},KEY_GEOLOC_ID+ " = ?",
+                new String[]{String.valueOf(itemId)},
+                null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    geolocalisation = new Geolocalisation();
+
+                    geolocalisation.setGeolocId(cursor.getLong(cursor.getColumnIndex(KEY_GEOLOC_ID)));
+                    geolocalisation.setGeolocAdresse1(cursor.getString(cursor.getColumnIndex(KEY_GEOLOC_ADRESSE1)));
+                    geolocalisation.setGeolocAdresse2(cursor.getString(cursor.getColumnIndex(KEY_GEOLOC_ADRESSE2)));
+                    geolocalisation.setGeolocAdresse3(cursor.getString(cursor.getColumnIndex(KEY_GEOLOC_ADRESSE3)));
+                    geolocalisation.setGeolocComplement(cursor.getString(cursor.getColumnIndex(KEY_GEOLOC_COMPLEMENT)));
+
+                    if (geolocalisation.getGeolocVille() != null) {
+                        Ville ville = getVilleById(sqLiteDatabase, cursor.getLong(cursor.getColumnIndex(KEY_GEOLOC_VILLE)));
+                        geolocalisation.setGeolocVille(ville);
+                    }
+
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+        return geolocalisation;
+
+    }
+
+    public Ville getVilleById(SQLiteDatabase sqLiteDatabase, long itemId) {
+
+        Ville ville = null;
+        Cursor cursor = sqLiteDatabase.query(TABLE_VILLE,
+                new String[]{KEY_VILLE_ID, KEY_VILLE_LIBELLE, KEY_VILLE_ZIP_CODE,
+                        KEY_VILLE_LATITUDE, KEY_VILLE_LONGITUDE, KEY_VILLE_DEPARTEMENT},
+                KEY_VILLE_ID + " = ?",
+                new String[]{String.valueOf(itemId)},
+                null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+
+                do {
+                    ville = new Ville();
+
+                    ville.setVilleId(cursor.getLong(cursor.getColumnIndex(KEY_VILLE_ID)));
+                    ville.setVilleLibelle(cursor.getString(cursor.getColumnIndex(KEY_VILLE_LIBELLE)));
+                    ville.setVilleZipCode(cursor.getString(cursor.getColumnIndex(KEY_VILLE_ZIP_CODE)));
+                    ville.setVilleLatitude(cursor.getString(cursor.getColumnIndex(KEY_VILLE_LATITUDE)));
+                    ville.setVilleLongitude(cursor.getString(cursor.getColumnIndex(KEY_VILLE_LONGITUDE)));
+
+                    Departement departement = getDepartementById(sqLiteDatabase, cursor.getLong(cursor.getColumnIndex(KEY_VILLE_DEPARTEMENT)));
+                    ville.setVilleDepartement(departement);
+
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+        return ville;
+    }
+
+    public Departement getDepartementById(SQLiteDatabase sqLiteDatabase, long itemId) {
+
+        Departement departement = null;
+        Cursor cursor = sqLiteDatabase.query(TABLE_DEPARTEMENT,
+                new String[]{KEY_DEPARTEMENT_ID, KEY_DEPARTEMENT_LIBELLE, KEY_DEPARTEMENT_REGION},
+                KEY_REGION_ID + " = ?",
+                new String[]{String.valueOf(itemId)},
+                null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+
+                do {
+                    departement = new Departement();
+
+                    departement.setDepartementId(cursor.getLong(cursor.getColumnIndex(KEY_DEPARTEMENT_ID)));
+                    departement.setDepartementLibelle(cursor.getString(cursor.getColumnIndex(KEY_DEPARTEMENT_LIBELLE)));
+
+                    Region region = getRegionById(sqLiteDatabase, cursor.getLong(cursor.getColumnIndex(KEY_DEPARTEMENT_REGION)));
+                    departement.setDepartementRegion(region);
+
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+        return departement;
+    }
+
+    public Region getRegionById(SQLiteDatabase sqLiteDatabase, long itemId) {
+
+        Region region = null;
+        Cursor cursor = sqLiteDatabase.query(TABLE_REGION,
+                new String[]{KEY_REGION_ID, KEY_REGION_LIBELLE},
+                KEY_REGION_ID + " = ?",
+                new String[]{String.valueOf(itemId)},
+                null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+
+                do {
+                    region = new Region();
+
+                    region.setRegionId(cursor.getLong(cursor.getColumnIndex(KEY_REGION_ID)));
+                    region.setRegionLibelle(cursor.getString(cursor.getColumnIndex(KEY_REGION_LIBELLE)));
+
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+        return region;
+    }
 
 }

@@ -10,11 +10,7 @@ public class Commons {
     public static SimpleDateFormat vinDateFormat = new SimpleDateFormat("yyyy");
     public static SimpleDateFormat appDateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
-    public static final int[] DICO_INT_1 = new int[]{0x459420, 0x915748, 0x864858, 0x324249, 0x423672,
-            0x459646, 0x916248, 0x866288, 0x324199, 0x731672, 0x459456, 0x11538, 0x864338,
-            0x326249, 0x423611, 0x866288, 0x324199, 0x731672, 0x459456, 0x11538, 0x864338,
-            0x866288, 0x324199, 0x731672, 0x459456, 0x11538, 0x864338, 0x866288, 0x324199
-    };
+
 
 
     /* some validation regexs*/
@@ -24,6 +20,23 @@ public class Commons {
     public static final String CODE_REGEX = "([0-9]{5}|[CEDEX]{1}[0-9]{10}){1}";
     public static final String YEAR_REGEX = "[1-2]{1}[0-9]{3}";
 
+
+    /* Region bundle fields */
+    public static final String R_ID = "R_ID";
+    public static final String R_LIBELLE = "R_LIBELLE";
+
+    /* Departement bundle fields */
+    public static final String D_ID = "D_ID";
+    public static final String D_LIBELLE = "D_LIBELLE";
+    public static final String D_REGION = "D_REGION";
+
+    /* Ville bunlde fields */
+    public static final String VILLE_ID = "V_ID";
+    public static final String VILLE_LIBELLE = "V_LIBELLE";
+    public static final String VILLE_ZIP_CODE = "V_ZIP_CODE";
+    public static final String VILLE_LONGITUDE = "V_LONGITUDE";
+    public static final String VILLE_LATITUDE = "V_LATITUDE";
+    public static final String VILLE_DEPARTEMENT = "V_DEPARTEMENT";
 
     /* Appelation bundle fields */
     public static final String A_ID = "A_ID";
@@ -68,10 +81,11 @@ public class Commons {
 
     /* Geolocalisation bundle fields */
     public static final String GEOLOC_ID = "GEOLOC_ID";
-    public static final String GEOLOC_PAYS = "GEOLOC_PAYS";
     public static final String GEOLOC_VILLE = "GEOLOC_VILLE";
-    public static final String GEOLOC_ADR = "GEOLOC_ADR";
-    public static final String GEOLOC_CP = "GEOLOC_CP";
+    public static final String GEOLOC_ADR1 = "GEOLOC_ADR1";
+    public static final String GEOLOC_ADR2 = "GEOLOC_ADR2";
+    public static final String GEOLOC_ADR3 = "GEOLOC_ADR3";
+    public static final String GEOLOC_COMPLEMENT = "GEOLOC_COMPLEMENT";
 
 
 }
