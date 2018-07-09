@@ -36,31 +36,31 @@ import com.example.dim.licence.utils.interfaces.CrudFragmentInterface;
 import java.util.List;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.utils.commons.Commons.APLN_;
+import static com.example.dim.licence.utils.commons.Commons.APLN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.APLN_SELECTED;
+import static com.example.dim.licence.utils.commons.Commons.AUCUN;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_SELECTED;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CANCEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_DELETE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_FILTER;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_SAVE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.FILTER_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_SELECTED;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_SELECTED;
 
 public class CaveActivity extends AppCompatActivity
         implements CrudFragmentInterface<Cave>
         , CrudDialogsInterface<Cave> {
 
-    /**
-     * PARAM for selected item
-     */
-    public static final String C_SELECTED = "C_SELECTED";
-    /**
-     * PARAM for each data passed in list fragment bundle
-     */
-    public static final String C_ = "C_";
-    /**
-     * PARAM number of items in list
-     */
-    public static final String C_COUNT = "C_COUNT";
-    /**
-     * PARAM for selected filter on vignerons list
-     */
-    public static final String C_DIALOG_TYPE = "C_DIALOG_TYPE";
-    /**
-     * PARAM for vignerons list onContactClick type
-     */
-    public static final String C_FILTER_TYPE = "C_FILTER_TYPE";
 
     /**
      * Bundle containing data
@@ -196,13 +196,13 @@ public class CaveActivity extends AppCompatActivity
         if (list != null) {
             for (Cave cave : list) {
                 // Log.i(ARG_DEBUG, "initCaveData: CAVE "+cave.getCaveId() +"\n"+ cave.toString());
-                caveBundle.putBundle(C_ + vIndex, cave.entityToBundle());
+                caveBundle.putBundle(CAVE_ + vIndex, cave.entityToBundle());
                 vIndex += 1;
             }
         }
-        caveBundle.putInt(C_COUNT, vIndex);
-        caveBundle.putInt(C_SELECTED, -1);
-        caveBundle.putString(C_FILTER_TYPE, "AUCUN"); // remove line
+        caveBundle.putInt(CAVE_COUNT, vIndex);
+        caveBundle.putInt(CAVE_SELECTED, -1);
+        caveBundle.putString(CAVE_FILTER_TYPE, AUCUN); // remove line
 
         // DITIONNARY DATA FOR CAVE
         // appelation
@@ -211,38 +211,36 @@ public class CaveActivity extends AppCompatActivity
         List<Appelation> appelations = model.getAllAppelations();
         if (appelations != null) {
             for (Appelation appelation : appelations) {
-                ditionnaryBundle.putBundle("A_" + vIndex, appelation.entityToBundle());
+                ditionnaryBundle.putBundle(APLN_ + vIndex, appelation.entityToBundle());
                 vIndex += 1;
             }
         }
-        ditionnaryBundle.putInt("A_COUNT", vIndex);
-        ditionnaryBundle.putInt("A_SELECTED", -1);
+        ditionnaryBundle.putInt(APLN_COUNT, vIndex);
+        ditionnaryBundle.putInt(APLN_SELECTED, -1);
 
         // typevin
         vIndex = 0;
         List<TypeVin> typeVins = model.getAllTypeVins();
         if (typeVins != null) {
             for (TypeVin typeVin : typeVins) {
-                ditionnaryBundle.putBundle("TV_" + vIndex, typeVin.entityToBundle());
+                ditionnaryBundle.putBundle(TVIN_ + vIndex, typeVin.entityToBundle());
                 vIndex += 1;
             }
         }
-        ditionnaryBundle.putInt("TV_COUNT", vIndex);
-        ditionnaryBundle.putInt("TV_SELECTED", -1);
+        ditionnaryBundle.putInt(TVIN_COUNT, vIndex);
+        ditionnaryBundle.putInt(TVIN_SELECTED, -1);
 
         // typevin
         vIndex = 0;
         List<Vigneron> vignerons = model.getAllVignerons();
         if (vignerons != null) {
             for (Vigneron vigneron : vignerons) {
-                ditionnaryBundle.putBundle("V_" + vIndex, vigneron.entityToBundle());
+                ditionnaryBundle.putBundle(VIGN_ + vIndex, vigneron.entityToBundle());
                 vIndex += 1;
             }
         }
-        ditionnaryBundle.putInt("V_COUNT", vIndex);
-        ditionnaryBundle.putInt("V_SELECTED", -1);
-
-
+        ditionnaryBundle.putInt(VIGN_COUNT, vIndex);
+        ditionnaryBundle.putInt(VIGN_SELECTED, -1);
 
         // init some settings for pager
         newMode = false;
@@ -310,10 +308,10 @@ public class CaveActivity extends AppCompatActivity
     @Override
     public void onDeleteClick() {
         Bundle b = new Bundle();
-        b.putString(C_DIALOG_TYPE, "DELETE");
-        b.putString(C_SELECTED, c_selected.getCaveVin().getVinLibelle());
+        b.putString(DIALOG_TYPE, DIALOG_DELETE);
+        b.putString(CAVE_SELECTED, c_selected.getCaveVin().getVinLibelle());
         CaveDialogs saveDialog = CaveDialogs.newInstance(b);
-        saveDialog.show(getSupportFragmentManager(), "saveBtnDialog");
+        saveDialog.show(getSupportFragmentManager(), DIALOG_DELETE);
     }
 
 
@@ -324,21 +322,21 @@ public class CaveActivity extends AppCompatActivity
             saveNew();
         } else {
             Bundle b = new Bundle();
-            b.putString(C_DIALOG_TYPE, "SAVE");
-            b.putBundle(C_SELECTED, item.entityToBundle());
+            b.putString(DIALOG_TYPE, DIALOG_SAVE);
+            b.putBundle(CAVE_SELECTED, item.entityToBundle());
             Log.i(ARG_DEBUG, "onSaveClick: ----------------------------------- " + item.getCaveVin().getVinImage());
             CaveDialogs saveDialog = CaveDialogs.newInstance(b);
-            saveDialog.show(getSupportFragmentManager(), "saveBtnDialog");
+            saveDialog.show(getSupportFragmentManager(), DIALOG_SAVE);
         }
     }
 
     @Override
     public void onFilterClick(String currentFilterType) {
         Bundle b = new Bundle();
-        b.putString(C_DIALOG_TYPE, "FILTER");
-        b.putString(C_FILTER_TYPE, currentFilterType);
+        b.putString(DIALOG_TYPE, DIALOG_FILTER);
+        b.putString(FILTER_TYPE, currentFilterType);
         VigneronDialogs vigneronDialogs = VigneronDialogs.newInstance(b);
-        vigneronDialogs.show(getSupportFragmentManager(), "filterDialog");
+        vigneronDialogs.show(getSupportFragmentManager(), DIALOG_FILTER);
     }
 
 
@@ -347,9 +345,9 @@ public class CaveActivity extends AppCompatActivity
         if (currentPage > 0) {
             if (currentPage == 2) {
                 Bundle b = new Bundle();
-                b.putString(C_DIALOG_TYPE, "CANCEL");
+                b.putString(DIALOG_TYPE, DIALOG_CANCEL);
                 CaveDialogs caveDialogs = CaveDialogs.newInstance(b);
-                caveDialogs.show(getSupportFragmentManager(), "cancelBtnDialog");
+                caveDialogs.show(getSupportFragmentManager(), DIALOG_CANCEL);
             } else {
                 currentPage -= 1;
                 goToPage(currentPage);
@@ -366,7 +364,9 @@ public class CaveActivity extends AppCompatActivity
         if (plus) {
             qty += 1;
         } else {
-            qty -= 1;
+            if (qty > 0) {
+                qty -= 1;
+            }
         }
         // setting modified value back
         cave.setCaveQuantite(qty);
@@ -379,10 +379,10 @@ public class CaveActivity extends AppCompatActivity
     }
 
     public void addNewVigneronToDictionary(Vigneron vigneron) {
-        int vigneronsCount = ditionnaryBundle.getInt("V_COUNT");
+        int vigneronsCount = ditionnaryBundle.getInt(VIGN_COUNT);
         vigneronsCount += 1;
 
-        ditionnaryBundle.putBundle("V_" + vigneronsCount, vigneron.entityToBundle());
+        ditionnaryBundle.putBundle(VIGN_ + vigneronsCount, vigneron.entityToBundle());
     }
 
     // from dialogs

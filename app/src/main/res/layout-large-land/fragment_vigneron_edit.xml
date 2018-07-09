@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:columnCount="1"
+            android:columnCount="2"
             android:rowCount="12">
 
             <android.support.design.widget.TextInputLayout
@@ -122,10 +122,10 @@
             </android.support.design.widget.TextInputLayout>
 
             <AutoCompleteTextView
-            android:layout_column="0"
-            android:layout_row="6"
-            android:hint="@string/villeEtCp"
-            android:id="@+id/edt_vigneron_ville"/>
+                android:layout_column="0"
+                android:layout_row="6"
+                android:hint="@string/villeEtCp"
+                android:id="@+id/edt_vigneron_ville"/>
 
 
             <android.support.design.widget.TextInputLayout
@@ -226,7 +226,7 @@
         android:background="@color/colorPrimary"
         android:orientation="horizontal">
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -237,7 +237,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

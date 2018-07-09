@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import static android.view.View.GONE;
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.utils.commons.Commons.IMAGE_RESIZE;
 import static com.example.dim.licence.utils.commons.Commons.vinDateFormat;
 
 public class CaveDetailFragment extends Fragment {
@@ -167,8 +168,8 @@ public class CaveDetailFragment extends Fragment {
     public Bitmap getResizedBitmap(Bitmap bm) {
         int width = bm.getWidth();
         int height = bm.getHeight();
-        float scaleWidth = ((float) 400) / width;
-        float scaleHeight = ((float) 400) / height;
+        float scaleWidth = ((float) IMAGE_RESIZE) / width;
+        float scaleHeight = ((float) IMAGE_RESIZE) / height;
         // CREATE A MATRIX FOR THE MANIPULATION
         Matrix matrix = new Matrix();
         // RESIZE THE BIT MAP

@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import com.example.dim.licence.utils.interfaces.EntityBundleInterface;
 
-import static com.example.dim.licence.utils.commons.Commons.A_ID;
-import static com.example.dim.licence.utils.commons.Commons.A_LABEL;
+import static com.example.dim.licence.utils.commons.Commons.APLN_ID;
+import static com.example.dim.licence.utils.commons.Commons.APLN_LABEL;
 
 public class Appelation implements EntityBundleInterface {
 
@@ -17,8 +17,8 @@ public class Appelation implements EntityBundleInterface {
     }
 
     public Appelation(Bundle bundle) {
-        this.appelationId = bundle.getLong(A_ID);
-        this.appelationLibelle = bundle.getString(A_LABEL);
+        this.appelationId = bundle.getLong(APLN_ID);
+        this.appelationLibelle = bundle.getString(APLN_LABEL);
     }
 
     public Long getAppelationId() {
@@ -67,8 +67,8 @@ public class Appelation implements EntityBundleInterface {
     @Override
     public Bundle entityToBundle() {
         Bundle bundle = new Bundle();
-        bundle.putLong(A_ID, appelationId);
-        bundle.putString(A_LABEL, appelationLibelle);
+        bundle.putLong(APLN_ID, appelationId);
+        bundle.putString(APLN_LABEL, appelationLibelle);
         return bundle;
     }
 }

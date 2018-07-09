@@ -55,19 +55,31 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.dim.licence.CaveActivity.C_DIALOG_TYPE;
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.utils.commons.Commons.APLN_;
+import static com.example.dim.licence.utils.commons.Commons.APLN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.APLN_ID;
+import static com.example.dim.licence.utils.commons.Commons.APLN_LABEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CANCEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.IMAGE_RESIZE;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_ID;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_LABEL;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_ID;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_INTENT_RETURN;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_LABEL;
 import static com.example.dim.licence.utils.commons.Commons.YEAR_REGEX;
 import static com.example.dim.licence.utils.commons.Commons.vinDateFormat;
 
 public class CaveEditFragment extends Fragment {
 
-
     private static final int ARG_CAMERA_INTENT = 1;
     private static final int ARG_FILE_CHOOSE_INTENT = 2;
-    private static final int ARG_KITKAT_FILE_CHOOSE_INTENT = 3;
     public static final int ARG_VIGNERON_INTENT = 4;
-
     private static final int PERMISSION_REQUEST_CAMERA_TAG = 9;
     private static final int PERMISSION_REQUEST_WRITE_STORAGE_TAG = 7;
 
@@ -87,8 +99,7 @@ public class CaveEditFragment extends Fragment {
     private FloatingActionButton fabFavorisOn;
     private FloatingActionButton fabFavorisOff;
 
-    private String[] imageChangeOptions = new String[]{"Prendre une photo", "Choisir dans mes fichiers"};
-
+    private String[] imageChangeOptions;// = new String[]{"Prendre une photo", "Choisir dans mes fichiers"};
     private AppCompatImageView iv_image;
     private Button btnNewVigneron;
     private Button btnCancel;
@@ -142,12 +153,6 @@ public class CaveEditFragment extends Fragment {
         initFragmentDataFromBundle();
 
 
-        if (item != null) {
-            // be sure that pictureUri is not null or won't be saved
-            pictureUri = Uri.parse(item.getCaveVin().getVinImage());
-        }
-
-
         // init favorite state
         fabFavorisOn.setVisibility(View.GONE);
         fabFavorisOff.setVisibility(View.VISIBLE);
@@ -155,24 +160,25 @@ public class CaveEditFragment extends Fragment {
         // setting simple list adapter to spinners
         sp_appelation.setAdapter(new SimpleAdapter(getContext(),
                 appelations, R.layout.spinner_standard_layout,
-                new String[]{"appelationLibelle"}, new int[]{R.id.sp_text}));
+                new String[]{APLN_LABEL}, new int[]{R.id.sp_text}));
 
         sp_type.setAdapter(new SimpleAdapter(getContext(),
                 typevins, R.layout.spinner_standard_layout,
-                new String[]{"typeVinLibelle"}, new int[]{R.id.sp_text}));
+                new String[]{TVIN_LABEL}, new int[]{R.id.sp_text}));
 
         sp_vigneron.setAdapter(new SimpleAdapter(getContext(),
                 vignerons, R.layout.spinner_standard_layout,
-                new String[]{"vigneronLibelle"}, new int[]{R.id.sp_text}));
+                new String[]{VIGN_LABEL}, new int[]{R.id.sp_text}));
 
         // and click listeners to buttons
         btnCancel.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle b = new Bundle();
-                b.putString(C_DIALOG_TYPE, "CANCEL");
+                b.putString(DIALOG_TYPE, DIALOG_CANCEL);
                 CaveDialogs dialogs = CaveDialogs.newInstance(b);
-                dialogs.show(getActivity().getSupportFragmentManager(), "CaveCancelDialog");
+                dialogs.show(getActivity().getSupportFragmentManager(),
+                        DIALOG_CANCEL);
             }
         });
 
@@ -182,6 +188,7 @@ public class CaveEditFragment extends Fragment {
                 if (validateInput()) {
                     Cave cave = updateCaveFromView();
                     activityCallback.onSaveClick(cave);
+                    pictureUri = null;
                 }
             }
         });
@@ -233,7 +240,8 @@ public class CaveEditFragment extends Fragment {
 
             private void handleOnImageChangeClick() {
                 new Builder(getContext()).setTitle("Action")
-                        .setSingleChoiceItems(R.array.cave_image_selection_type, -1, new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(R.array.cave_image_selection_type, -1,
+                                new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 changeImageSelection = imageChangeOptions[i];
@@ -245,11 +253,13 @@ public class CaveEditFragment extends Fragment {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // return in unvalid selection
                                 if (changeImageSelection.isEmpty()) {
-                                    Toast.makeText(getContext(), "Selection invalide !", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Selection invalide !",
+                                            Toast.LENGTH_SHORT).show();
                                     return;
                                 }
 
-                                if (changeImageSelection.equalsIgnoreCase("Prendre une photo")) {
+                                if (changeImageSelection.equalsIgnoreCase(getResources()
+                                        .getString(R.string.cave_image_prendre_photo))) {
                                     handleCameraIntent();
                                 } else {
                                     handleFileChooserIntent();
@@ -270,7 +280,6 @@ public class CaveEditFragment extends Fragment {
     }
 
     private void handleFileChooserIntent() {
-        // check for permissions and launch prompt if necessary
         if (ContextCompat.checkSelfPermission(getContext(),
                 permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestFilesPermission();
@@ -290,7 +299,7 @@ public class CaveEditFragment extends Fragment {
                 requestCameraPermission();
             }
 
-            // chack for permissions and launch prompt if necessary
+            // check for permissions and launch prompt if necessary
             if (ContextCompat.checkSelfPermission(getContext(),
                     permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestFilesPermission();
@@ -301,7 +310,6 @@ public class CaveEditFragment extends Fragment {
                     permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                     && ContextCompat.checkSelfPermission(getContext(),
                     permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                // test permissions !!
                 launchCameraIntent();
             }
         }
@@ -312,7 +320,6 @@ public class CaveEditFragment extends Fragment {
         fabFavorisOn.setVisibility(item.isCaveFavoris() ? View.VISIBLE : View.GONE);
         fabFavorisOff.setVisibility(item.isCaveFavoris() ? View.GONE : View.VISIBLE);
     }
-
 
     private void requestCameraPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
@@ -358,10 +365,10 @@ public class CaveEditFragment extends Fragment {
                         Intent.createChooser(intent, "Séléctionnez une image"),
                         ARG_FILE_CHOOSE_INTENT);
             } else {
-                Toast.makeText(getActivity(), "Cette fonctionnalité nécessite un explorateur de fichier.",
+                Toast.makeText(getActivity(), getResources().getString(R.string.file_app_required),
                         Toast.LENGTH_SHORT).show();
             }
-            //startActivityForResult(intent, GALLERY_INTENT_CALLED);
+
         } else {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -375,16 +382,12 @@ public class CaveEditFragment extends Fragment {
             if (isIntentSafe) {
                 startActivityForResult(
                         Intent.createChooser(intent, "Séléctionnez une image"),
-                        ARG_KITKAT_FILE_CHOOSE_INTENT);
+                        ARG_FILE_CHOOSE_INTENT);
             } else {
-                Toast.makeText(getActivity(), "Cette fonctionnalité nécessite un explorateur de fichier.",
+                Toast.makeText(getActivity(), getResources().getString(R.string.file_app_required),
                         Toast.LENGTH_SHORT).show();
             }
-            //startActivityForResult(intent, GALLERY_KITKAT_INTENT_CALLED);
         }
-
-        // search for file explorer application
-
     }
 
 
@@ -413,24 +416,27 @@ public class CaveEditFragment extends Fragment {
 
 
     private void initFragmentDataFromBundle() {
+        imageChangeOptions = new String[]{getResources().getString(R.string.cave_image_prendre_photo),
+                getResources().getString(R.string.cave_image_choisir_galerie)};
+        // init vars
         appelations = new ArrayList<>();
-        int count = getArguments().getInt("A_COUNT", -1);
+        int count = getArguments().getInt(APLN_COUNT, -1);
 
         if (count != -1) {
             HashMap<String, String> row;
             Appelation appelation;
-
+            // add to list for simpleAdapter
             for (int i = 0; i < count; i++) {
                 row = new HashMap<>();
-                appelation = new Appelation(getArguments().getBundle("A_" + i));
-                row.put("appelationLibelle", appelation.getAppelationLibelle());
-                row.put("appelationId", String.valueOf(appelation.getAppelationId()));
+                appelation = new Appelation(getArguments().getBundle(APLN_ + i));
+                row.put(APLN_LABEL, appelation.getAppelationLibelle());
+                row.put(APLN_ID, String.valueOf(appelation.getAppelationId()));
                 appelations.add(i, row);
             }
         }
 
         typevins = new ArrayList<>();
-        count = getArguments().getInt("TV_COUNT", -1);
+        count = getArguments().getInt(TVIN_COUNT, -1);
 
         if (count != -1) {
             HashMap<String, String> row;
@@ -438,40 +444,33 @@ public class CaveEditFragment extends Fragment {
 
             for (int i = 0; i < count; i++) {
                 row = new HashMap<>();
-                type = new TypeVin(getArguments().getBundle("TV_" + i));
-                row.put("typeVinLibelle", type.getTypeVinLibelle());
-                row.put("typeVinId", String.valueOf(type.getTypeVinId()));
+                type = new TypeVin(getArguments().getBundle(TVIN_ + i));
+                row.put(TVIN_LABEL, type.getTypeVinLibelle());
+                row.put(TVIN_ID, String.valueOf(type.getTypeVinId()));
                 typevins.add(i, row);
             }
         }
 
         vignerons = new ArrayList<>();
         vigneronsBackingList = new ArrayList<>();
-        count = getArguments().getInt("V_COUNT", -1);
+        count = getArguments().getInt(VIGN_COUNT, -1);
 
         if (count != -1) {
             HashMap<String, String> row;
             Vigneron vigneron;
 
-            // adding none option to list
-            //HashMap<String, String> noValueOption = new HashMap<>();
-            //noValueOption.put("vigneronLibelle", "AUCUN");
-            //vignerons.add(0, noValueOption);
-
             // adding data to list
-            //int rowNbr = 1; // cause we inserted first element already
             for (int i = 0; i < count; i++) {
                 row = new HashMap<>();
 
-                vigneron = new Vigneron(getArguments().getBundle("V_" + i));
-                row.put("vigneronLibelle", vigneron.getVigneronLibelle());
-                row.put("vigneronId", String.valueOf(vigneron.getVigneronId()));
+                vigneron = new Vigneron(getArguments().getBundle(VIGN_ + i));
+                row.put(VIGN_LABEL, vigneron.getVigneronLibelle());
+                row.put(VIGN_ID, String.valueOf(vigneron.getVigneronId()));
                 vignerons.add(row);
                 vigneronsBackingList.add(vigneron);
             }
         }
 
-        printData();
     }
 
     private void printData() {
@@ -586,7 +585,6 @@ public class CaveEditFragment extends Fragment {
         if (requestCode == ARG_FILE_CHOOSE_INTENT) {
             if (resultCode == RESULT_OK) {
 
-                Log.i(ARG_DEBUG, "onActivityResult: " + pictureUri.getPath());
 
                 if (Build.VERSION.SDK_INT < 19) {
                     pictureUri = data.getData();
@@ -602,45 +600,7 @@ public class CaveEditFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-
-                Log.i(ARG_DEBUG, "onActivityResult: " + pictureUri.getPath());
-
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), pictureUri);
-                    // setting to imageView
-                    if (null != bitmap) {
-                        iv_image.setImageBitmap(getResizedBitmap(bitmap));
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return;
-            }
-        }
-
-        if (requestCode == ARG_KITKAT_FILE_CHOOSE_INTENT) {
-            if (resultCode == RESULT_OK) {
-                pictureUri = data.getData();
-
-                Log.i(ARG_DEBUG, "onActivityResult: " + pictureUri.getPath());
-
-                if (Build.VERSION.SDK_INT < 19) {
-                    pictureUri = data.getData();
-                } else {
-                    // if sdk > 19 some permissions needed to save persistent URI
-                    pictureUri = data.getData();
-                    final int takeFlags = data.getFlags()
-                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-                    // acknowledge some permissions to retrieve Uris on next launch
-                    try {
-                        getActivity().getContentResolver().takePersistableUriPermission(pictureUri, takeFlags);
-                    } catch (SecurityException e) {
-                        e.printStackTrace();
-                    }
-                }
+                //Log.i(ARG_DEBUG, "onActivityResult: " + pictureUri.getPath());
 
                 Log.i(ARG_DEBUG, "onActivityResult: " + pictureUri.getPath());
 
@@ -663,22 +623,26 @@ public class CaveEditFragment extends Fragment {
                 Log.i(ARG_DEBUG, "onActivityResult: VIGNERON INTENT  -- RESULT OK !");
                 Vigneron vigneron = new Vigneron(data.getBundleExtra("VIGNERON_CREATED"));
                 // add to dictionnary bundle
+                Log.i(ARG_DEBUG, "onActivityResult: ---------------------------------- " + vigneron.toString());
                 ((CaveActivity) getActivity()).addNewVigneronToDictionary(vigneron);
 
                 // handle new vigneron adapter
                 handleNewVigneron(vigneron);
                 return;
+            } else {
+                Intent intent = new Intent(getActivity(), CaveActivity.class);
+                intent.putExtra(VIGN_INTENT_RETURN, true);
+                startActivity(intent);
             }
         }
-
     }
 
     // called from activity
     public void handleNewVigneron(Vigneron vigneron) {
         // creating adapter row value
         HashMap<String, String> row = new HashMap<>();
-        row.put("vigneronLibelle", vigneron.getVigneronLibelle());
-        row.put("vigneronId", String.valueOf(vigneron.getVigneronId()));
+        row.put(VIGN_LABEL, vigneron.getVigneronLibelle());
+        row.put(VIGN_ID, String.valueOf(vigneron.getVigneronId()));
         // update vignerons adapter rows
         vignerons.add(row);
         // update vigneron backing list
@@ -686,12 +650,13 @@ public class CaveEditFragment extends Fragment {
         // set new adapter
         sp_vigneron.setAdapter(new SimpleAdapter(getContext(),
                 vignerons, R.layout.spinner_standard_layout,
-                new String[]{"vigneronLibelle"}, new int[]{R.id.sp_text}));
+                new String[]{VIGN_LABEL}, new int[]{R.id.sp_text}));
 
         sp_vigneron.setSelection(getVigneronItemPosition(vigneron.getVigneronLibelle()));
 
         // set new vigneron to item (Cave)
         item.getCaveVin().setVinVigneron(vigneron);
+        // set image back
         if (pictureUri != null) {
             item.getCaveVin().setVinImage(pictureUri.toString());
         }
@@ -701,8 +666,8 @@ public class CaveEditFragment extends Fragment {
     public Bitmap getResizedBitmap(Bitmap bm) {
         int width = bm.getWidth();
         int height = bm.getHeight();
-        float scaleWidth = ((float) 400) / width;
-        float scaleHeight = ((float) 400) / height;
+        float scaleWidth = ((float) IMAGE_RESIZE) / width;
+        float scaleHeight = ((float) IMAGE_RESIZE) / height;
         // CREATE A MATRIX FOR THE MANIPULATION
         Matrix matrix = new Matrix();
         // RESIZE THE BIT MAP
@@ -736,68 +701,81 @@ public class CaveEditFragment extends Fragment {
         cave.setCaveFavoris(fabFavorisOn.getVisibility() == View.VISIBLE);
 
         // create new wine to add cave
-        Vin vin = new Vin();
-        if (item.getCaveVin().getVinId() != null) {
+        Vin vin = null;
+        if (item.getCaveVin() != null) {
+            vin = new Vin();
             vin.setVinId(item.getCaveVin().getVinId());
-        }
 
-        if (null != pictureUri) {
-            if (!pictureUri.getPath().isEmpty()) {
-                String path = pictureUri.toString();
-                item.getCaveVin().setVinImage(path);
-                vin.setVinImage(path);
-            }
-        }
-
-        vin.setVinLibelle(et_libelle.getText().toString());
-        if (!et_prix.getText().toString().isEmpty()) {
-            vin.setVinPrix(Double.valueOf(et_prix.getText().toString()));
-        }
-        vin.setVinCommentaire(et_commentaire.getText().toString());
-        // set wine appelation
-        if (sp_appelation.getSelectedItem() != null) {
-            HashMap<String, String> map = (HashMap<String, String>) sp_appelation.getSelectedItem();
-            Appelation appelation = new Appelation();
-            appelation.setAppelationId(Long.valueOf(map.get("appelationId")));
-            appelation.setAppelationLibelle(map.get("appelationLibelle"));
-            vin.setVinAppelation(appelation);
-        }
-        // avoid none database values ( 'AUCUN' )
-        if (sp_vigneron.getSelectedItem() != null) {
-            HashMap<String, String> map = (HashMap<String, String>) sp_vigneron.getSelectedItem();
-            if (map.get("vigneronId") != null) {
-                if (!map.get("vigneronId").equalsIgnoreCase("0")) {
-                    for (Vigneron vigneron :
-                            vigneronsBackingList) {
-                        if (vigneron.getVigneronId().toString().equalsIgnoreCase(map.get("vigneronId"))) {
-                            vin.setVinVigneron(vigneron);
-                        }
-                    }
+            if (null != pictureUri) {
+                if (!pictureUri.getPath().isEmpty()) {
+                    String path = pictureUri.toString();
+                    item.getCaveVin().setVinImage(path);
+                    vin.setVinImage(path);
                 }
             }
 
-        }
-        // set wine type, can't be null
-        if (sp_type.getSelectedItem() != null) {
-            HashMap<String, String> map = (HashMap<String, String>) sp_type.getSelectedItem();
-            TypeVin typeVin = new TypeVin();
-            typeVin.setTypeVinId(Long.valueOf(map.get("typeVinId")));
-            typeVin.setTypeVinLibelle(map.get("typeVinLibelle"));
-            vin.setVinType(typeVin);
-        }
-        // set item dates from string, only the year is of interest
-        try {
-            if (!et_annee.getText().toString().isEmpty()) {
-                vin.setVinAnnee(vinDateFormat.parse(et_annee.getText().toString()));
+            vin.setVinLibelle(et_libelle.getText().toString());
+
+            if (!et_prix.getText().toString().isEmpty()) {
+                vin.setVinPrix(Double.valueOf(et_prix.getText().toString()));
+            } else {
+                vin.setVinPrix(0.0);
             }
-            if (!et_annee_max.getText().toString().isEmpty()) {
-                vin.setVinAnneeMax(vinDateFormat.parse(et_annee_max.getText().toString()));
+            vin.setVinCommentaire(et_commentaire.getText().toString());
+
+            // set wine appelation
+            if (sp_appelation.getSelectedItem() != null) {
+                HashMap<String, String> map = (HashMap<String, String>) sp_appelation.getSelectedItem();
+                Appelation appelation = new Appelation();
+                appelation.setAppelationId(Long.valueOf(map.get(APLN_ID)));
+                appelation.setAppelationLibelle(map.get(APLN_LABEL));
+                vin.setVinAppelation(appelation);
             }
-        } catch (ParseException pe) {
-            Log.e(ARG_DEBUG, "updateVigneronFromView: ", pe);
+            // avoid none database values ( 'AUCUN' )
+            if (sp_vigneron.getSelectedItem() != null) {
+                HashMap<String, String> map = (HashMap<String, String>) sp_vigneron.getSelectedItem();
+                if (map.get(VIGN_ID) != null) {
+                    if (!map.get(VIGN_ID).equalsIgnoreCase("0")) {
+                        for (Vigneron vigneron :
+                                vigneronsBackingList) {
+                            if (vigneron.getVigneronId().toString().equalsIgnoreCase(map.get(VIGN_ID))) {
+                                vin.setVinVigneron(vigneron);
+                            }
+                        }
+                    }
+                }
+
+            }
+            // set wine type, can't be null
+            if (sp_type.getSelectedItem() != null) {
+                HashMap<String, String> map = (HashMap<String, String>) sp_type.getSelectedItem();
+                TypeVin typeVin = new TypeVin();
+                typeVin.setTypeVinId(Long.valueOf(map.get(TVIN_ID)));
+                typeVin.setTypeVinLibelle(map.get(TVIN_LABEL));
+                vin.setVinType(typeVin);
+            }
+            // set item dates from string, only the year is of interest
+            try {
+                if (!et_annee.getText().toString().isEmpty()) {
+                    vin.setVinAnnee(vinDateFormat.parse(et_annee.getText().toString()));
+                }
+                if (!et_annee_max.getText().toString().isEmpty()) {
+                    vin.setVinAnneeMax(vinDateFormat.parse(et_annee_max.getText().toString()));
+                }
+            } catch (ParseException pe) {
+                Log.e(ARG_DEBUG, "updateVigneronFromView: ", pe);
+            }
         }
+
+
+
+
+
         // set wine to cave
-        cave.setCaveVin(vin);
+        if (null != vin) {
+            cave.setCaveVin(vin);
+        }
+
 
         return cave;
     }
@@ -952,6 +930,32 @@ public class CaveEditFragment extends Fragment {
         }
         Log.e(ARG_DEBUG, "getVigneronItemPosition: NOT FOUND !!! RETURNING 0 to go to first !");
         return 0;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == ARG_CAMERA_INTENT) {
+            if (grantResults.length > 0) {
+                if (grantResults[0] == RESULT_OK) {
+                    launchCameraIntent();
+                } else {
+                    Toast.makeText(getContext(), R.string.photo_perms_off, Toast.LENGTH_LONG).show();
+                }
+            }
+            return;
+        }
+
+        if (requestCode == ARG_FILE_CHOOSE_INTENT) {
+            if (grantResults.length > 0) {
+                if (grantResults[0] == RESULT_OK) {
+                    launchFileChooser();
+                } else {
+                    Toast.makeText(getContext(), R.string.files_perms_off, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 
     @Override

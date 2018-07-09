@@ -230,7 +230,10 @@ public class Vin implements EntityBundleInterface{
         bundle.putDouble(VIN_PRIX, vinPrix == null ? 0.0 : vinPrix);
         bundle.putBundle(VIN_TYPE, vinType.entityToBundle());
         bundle.putBundle(VIN_APPELATION, vinAppelation.entityToBundle());
-        bundle.putBundle(VIN_VIGNERON, vinVigneron.entityToBundle());
+        if (vinVigneron != null) {
+            bundle.putBundle(VIN_VIGNERON, vinVigneron.entityToBundle());
+        }
+
         return bundle;
     }
 }

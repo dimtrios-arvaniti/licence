@@ -34,6 +34,22 @@ import com.example.dim.licence.utils.interfaces.CrudFragmentInterface;
 import java.util.List;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.utils.commons.Commons.AUCUN;
+import static com.example.dim.licence.utils.commons.Commons.AVAILABLE_CONTACT_TYPES;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_FIXE;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_MAIL;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_MOBILE;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CANCEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CONTACT;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_DELETE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_FILTER;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_SAVE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.FILTER_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_SELECTED;
 
 
 // DrawerMenu a mettre dans une classe abstraite pour éviter la surcharge de code identique  !!
@@ -41,34 +57,7 @@ public class VigneronActivity extends AppCompatActivity
         implements CrudFragmentInterface<Vigneron>
         , CrudDialogsInterface<Vigneron> {
 
-    /**
-     * PARAM for selected item
-     */
-    public static final String V_SELECTED = "V_SELECTED";
-    /**
-     * PARAM for each data passed in list fragment bundle
-     */
-    public static final String V_ = "V_";
-    /**
-     * PARAM number of items in list
-     */
-    public static final String V_COUNT = "V_COUNT";
-    /**
-     * PARAM for selected filter on vignerons list
-     */
-    public static final String V_DIALOG_TYPE = "V_DIALOG_TYPE";
-    /**
-     * PARAM for vignerons list onContactClick type
-     */
-    public static final String V_FILTER_TYPE = "V_FILTER_TYPE";
-    /**
-     * PARAM for vignerons list contact field
-     */
-    public static final String V_CONTACT_TYPE = "V_CONTACT_TYPE";
-    /**
-     * PARAM for vignerons list contact available fields
-     */
-    public static final String V_AVAILABLE_CONTACT_TYPES = "V_AVAILABLES_CONTACT_TYPE";
+
     /**
      * Bundle containing data
      */
@@ -211,13 +200,13 @@ public class VigneronActivity extends AppCompatActivity
         List<Vigneron> list = model.getAllButDefaultVignerons();
         if (list != null) {
             for (Vigneron v : list) {
-                vigneronsBundle.putBundle(V_ + vIndex, v.entityToBundle());
+                vigneronsBundle.putBundle(VIGN_ + vIndex, v.entityToBundle());
                 vIndex += 1;
             }
         }
-        vigneronsBundle.putInt(V_COUNT, vIndex);
-        vigneronsBundle.putInt(V_SELECTED, -1);
-        vigneronsBundle.putString(V_FILTER_TYPE, "NONE"); // remove line
+        vigneronsBundle.putInt(VIGN_COUNT, vIndex);
+        vigneronsBundle.putInt(VIGN_SELECTED, -1);
+        vigneronsBundle.putString(FILTER_TYPE, AUCUN); // remove line
 
 /*        // to much data to do this by bundles !!
 
@@ -309,10 +298,10 @@ public class VigneronActivity extends AppCompatActivity
     @Override
     public void onDeleteClick() {
         Bundle b = new Bundle();
-        b.putString(V_DIALOG_TYPE, "DELETE");
-        b.putString(V_SELECTED, v_selected.getVigneronLibelle());
+        b.putString(DIALOG_TYPE, DIALOG_DELETE);
+        b.putString(VIGN_SELECTED, v_selected.getVigneronLibelle());
         VigneronDialogs saveDialog = VigneronDialogs.newInstance(b);
-        saveDialog.show(getSupportFragmentManager(), "saveBtnDialog");
+        saveDialog.show(getSupportFragmentManager(), DIALOG_DELETE);
     }
 
     @Override
@@ -337,20 +326,20 @@ public class VigneronActivity extends AppCompatActivity
             listFragment.updateRecyclerAdpater(v_selected, false, newMode);
         } else {
             Bundle b = new Bundle();
-            b.putString(V_DIALOG_TYPE, "SAVE");
-            b.putBundle(V_SELECTED, item.entityToBundle());
+            b.putString(DIALOG_TYPE, DIALOG_SAVE);
+            b.putBundle(VIGN_SELECTED, item.entityToBundle());
             VigneronDialogs saveDialog = VigneronDialogs.newInstance(b);
-            saveDialog.show(getSupportFragmentManager(), "saveBtnDialog");
+            saveDialog.show(getSupportFragmentManager(), DIALOG_SAVE);
         }
     }
 
     @Override
     public void onFilterClick(String currentFilterType) {
         Bundle b = new Bundle();
-        b.putString(V_DIALOG_TYPE, "FILTER");
-        b.putString(V_FILTER_TYPE, currentFilterType);
+        b.putString(DIALOG_TYPE, DIALOG_FILTER);
+        b.putString(FILTER_TYPE, currentFilterType);
         VigneronDialogs vigneronDialogs = VigneronDialogs.newInstance(b);
-        vigneronDialogs.show(getSupportFragmentManager(), "filterDialog");
+        vigneronDialogs.show(getSupportFragmentManager(), DIALOG_FILTER);
     }
 
     @Override
@@ -358,7 +347,7 @@ public class VigneronActivity extends AppCompatActivity
         if (currentPage > 0) {
             if (currentPage == 2) {
                 Bundle b = new Bundle();
-                b.putString(V_DIALOG_TYPE, "CANCEL");
+                b.putString(DIALOG_TYPE, DIALOG_CANCEL);
                 VigneronDialogs vigneronDialogs = VigneronDialogs.newInstance(b);
                 vigneronDialogs.show(getSupportFragmentManager(), "cancelBtnDialog");
             } else {
@@ -526,8 +515,8 @@ public class VigneronActivity extends AppCompatActivity
         }
 
         Bundle b = new Bundle();
-        b.putString(V_DIALOG_TYPE, "CONTACT");
-        b.putString(V_CONTACT_TYPE, "NONE");
+        b.putString(DIALOG_TYPE, DIALOG_CONTACT);
+        b.putString(CONTACT_TYPE, AUCUN);
 
         // known option size - should be extracted
         // following is quite ...ty.  careful with field/index pairs
@@ -536,23 +525,23 @@ public class VigneronActivity extends AppCompatActivity
         availableOptions[1] = !v_selected.getVigneronMobile().isEmpty();
         availableOptions[2] = !v_selected.getVigneronMail().isEmpty();
 
-        b.putBooleanArray(V_AVAILABLE_CONTACT_TYPES, availableOptions);
+        b.putBooleanArray(AVAILABLE_CONTACT_TYPES, availableOptions);
 
         VigneronDialogs vigneronDialogs = VigneronDialogs.newInstance(b);
-        vigneronDialogs.show(getSupportFragmentManager(), "contactDialog");
+        vigneronDialogs.show(getSupportFragmentManager(), DIALOG_CONTACT);
     }
 
     public void applyContact(String contactMode) {
         if (contactMode != null) {
             if (!contactMode.isEmpty()) {
                 Log.i(ARG_DEBUG, "applyContact: " + contactMode);
-                if (contactMode.equalsIgnoreCase("FIXE")) {
+                if (contactMode.equalsIgnoreCase(CONTACT_FIXE)) {
                     makeACall();
                 }
-                if (contactMode.equalsIgnoreCase("MOBILE")) {
+                if (contactMode.equalsIgnoreCase(CONTACT_MOBILE)) {
                     makeAMobileCall();
                 }
-                if (contactMode.equalsIgnoreCase("MAIL")) {
+                if (contactMode.equalsIgnoreCase(CONTACT_MAIL)) {
                     sendAMail();
                 }
             }

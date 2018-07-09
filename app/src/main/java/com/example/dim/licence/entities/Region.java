@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import com.example.dim.licence.utils.interfaces.EntityBundleInterface;
 
-import static com.example.dim.licence.utils.commons.Commons.R_ID;
-import static com.example.dim.licence.utils.commons.Commons.R_LIBELLE;
+import static com.example.dim.licence.utils.commons.Commons.REGION_ID;
+import static com.example.dim.licence.utils.commons.Commons.REGION_LIBELLE;
 
 public class Region implements EntityBundleInterface {
 
@@ -17,8 +17,8 @@ public class Region implements EntityBundleInterface {
 
     public Region(Bundle bundle) {
         if (bundle != null) {
-            regionId = bundle.getLong(R_ID);
-            regionLibelle = bundle.getString(R_LIBELLE);
+            regionId = bundle.getLong(REGION_ID);
+            regionLibelle = bundle.getString(REGION_LIBELLE);
         }
 
     }
@@ -68,8 +68,8 @@ public class Region implements EntityBundleInterface {
     @Override
     public Bundle entityToBundle() {
         Bundle bundle = new Bundle();
-        bundle.putLong(R_ID, regionId);
-        bundle.putString(R_LIBELLE, regionLibelle);
+        bundle.putLong(REGION_ID, regionId);
+        bundle.putString(REGION_LIBELLE, regionLibelle);
         return bundle;
     }
 }

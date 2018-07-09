@@ -32,7 +32,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -240,6 +243,15 @@ public class MainActivity extends AppCompatActivity {
         return sb.toString();
     }
 
+    public static void witeStream(OutputStream stream)
+            throws IOException {
+        Writer writer = new OutputStreamWriter(stream, "UTF-8");
+
+        String s = "un texte";
+        writer.write(s);
+        writer.flush();
+    }
+
     public boolean isConnected() {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -377,9 +389,7 @@ public class MainActivity extends AppCompatActivity {
         private ArrayList<String> rows = new ArrayList<>();
         private File rawFile;
         boolean finished = false;
-        //private PowerManager.WakeLock wakeLock;
         private Activity activity;
-        //private transient int originalRequestedOrientation;
 
         public InitializeDatabaseTask(Activity activity) {
             super();
@@ -576,24 +586,24 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
 
             String result = "";
-
+            String URL = "";
+//"http://192.168.42.195:64902/api/login/createaccount?pwd=titi"
             try {
-                URL url = new URL("http://192.168.42.195:64902/api/login/createaccount?pwd=titi");
+                URL url = new URL(URL);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.setRequestProperty("Allow", "GET");
                 urlConnection.setRequestProperty("Content-Type", "text/plain");
                 urlConnection.setRequestProperty("Charset", "utf-8");
-                urlConnection.setDoInput(true); // RESPONSE HAS BODY !
+                urlConnection.setDoInput(true);
                 //urlConnection.setChunkedStreamingMode(0); // IMPORTANT unknown string length !
 
                 // urlConnection.connect();
                 InputStream stream = urlConnection.getInputStream();
 
-                Log.i(ARG_DEBUG, "doInBackground: HTTP response code: " + urlConnection.getResponseCode());
+                Log.i(ARG_DEBUG, "doInBackground: HTTP response code: "
+                        + urlConnection.getResponseCode());
                 if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-
-                    // Converts Stream to String with max length of 1000.
                     result = readStream(stream);
                     Log.i(ARG_DEBUG, "doInBackground: RESPONSE=" + result);
 

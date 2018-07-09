@@ -21,19 +21,30 @@ import com.example.dim.licence.R;
 import com.example.dim.licence.entities.Cave;
 import com.example.dim.licence.utils.interfaces.CrudDialogsInterface;
 
-import static com.example.dim.licence.CaveActivity.C_DIALOG_TYPE;
-import static com.example.dim.licence.CaveActivity.C_FILTER_TYPE;
-import static com.example.dim.licence.CaveActivity.C_SELECTED;
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.utils.commons.Commons.AUCUN;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_ANNEE;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_APPELATION;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_FAVORIS;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_NOM;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_VIGNERON;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_SELECTED;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CANCEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_DELETE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_FILTER;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_SAVE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.FILTER_TYPE;
 
 public class CaveDialogs extends DialogFragment {
 
     private CrudDialogsInterface<Cave> activityCallback;
-    private final String[] changeImageOptions = new String[]{"Prendre une photo", "Choisir dans ma galerie"};
-    private final String[] filterData = new String[]{"AUCUN", "NOM", "TYPE", "APPELATION", "VIGNERON", "FAVORIS"};
+    // private final String[] changeImageOptions;
+    private final String[] filterData = new String[]{AUCUN, CAVE_FILTER_NOM, CAVE_FILTER_ANNEE, CAVE_FILTER_APPELATION, CAVE_FILTER_TYPE, CAVE_FILTER_VIGNERON, CAVE_FILTER_FAVORIS};
     //private final String[] contactData = new String[]{"FIXE", "MOBILE", "FAX", "MAIL"};
 
-   // private String contactSelected;
+    // private String contactSelected;
     private LinearLayout filterSearchLayout; // layout containing filterDialog editText
     private EditText filterSearchEdit;
     private String filterSelected;
@@ -51,19 +62,19 @@ public class CaveDialogs extends DialogFragment {
 
         // ContextThemeWrapper is needed for custom content in dialogs
         AlertDialog.Builder builder = new Builder(new ContextThemeWrapper(getContext(), R.style.AppTheme_Dialog));
-        String dialogType = getArguments().getString(C_DIALOG_TYPE);
+        String dialogType = getArguments().getString(DIALOG_TYPE);
 
         switch (dialogType) {
-            case "FILTER":
+            case DIALOG_FILTER:
                 makeFilterDialog(builder);
                 break;
-            case "CANCEL":
+            case DIALOG_CANCEL:
                 makeCancelDialog(builder);
                 break;
-            case "SAVE":
+            case DIALOG_SAVE:
                 makeSaveDialog(builder);
                 break;
-            case "DELETE":
+            case DIALOG_DELETE:
                 makeDeleteDialog(builder);
                 break;
             default:
@@ -77,7 +88,7 @@ public class CaveDialogs extends DialogFragment {
 
     private void makeDeleteDialog(Builder builder) {
         builder.setTitle("SUPPRIMER").setMessage("Etes vous sûr de vouloir supprimer "
-                + getArguments().getString(C_SELECTED)
+                + getArguments().getString(CAVE_SELECTED)
                 + " ? \nLes données seront perdues !")
                 .setNegativeButton("Non", null)
                 .setPositiveButton("Oui", new OnClickListener() {
@@ -95,7 +106,7 @@ public class CaveDialogs extends DialogFragment {
                 .setPositiveButton("Oui", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Cave cave = new Cave(getArguments().getBundle(C_SELECTED));
+                        Cave cave = new Cave(getArguments().getBundle(CAVE_SELECTED));
                         activityCallback.save(cave);
                     }
                 });
@@ -122,7 +133,8 @@ public class CaveDialogs extends DialogFragment {
             initFilterDialog();
         }
 
-        int currentChoiceIndex = getFilterChoiceIndex(getArguments().getString(C_FILTER_TYPE));
+        int currentChoiceIndex = getFilterChoiceIndex(getArguments()
+                .getString(FILTER_TYPE));
 
         builder.setTitle("FILTRER")
                 .setView(filterSearchLayout)
@@ -171,12 +183,13 @@ public class CaveDialogs extends DialogFragment {
     }
 
     private int getFilterChoiceIndex(String currentChoice) {
-        return currentChoice.equalsIgnoreCase("NONE") ? 0 :
-                currentChoice.equalsIgnoreCase("NOM") ? 1 :
-                        currentChoice.equalsIgnoreCase("APPELATION") ? 2 :
-                                currentChoice.equalsIgnoreCase("TYPE") ? 3 :
-                                        currentChoice.equalsIgnoreCase("VIGNERON") ? 4 :
-                                                currentChoice.equalsIgnoreCase("FAVORIS") ? 5 : -1;
+        return currentChoice.equalsIgnoreCase(AUCUN) ? 0 :
+                currentChoice.equalsIgnoreCase(CAVE_FILTER_NOM) ? 1 :
+                        currentChoice.equalsIgnoreCase(CAVE_FILTER_ANNEE) ? 2 :
+                                currentChoice.equalsIgnoreCase(CAVE_FILTER_APPELATION) ? 3 :
+                                        currentChoice.equalsIgnoreCase(CAVE_FILTER_TYPE) ? 4 :
+                                                currentChoice.equalsIgnoreCase(CAVE_FILTER_VIGNERON) ? 5 :
+                                                        currentChoice.equalsIgnoreCase(CAVE_FILTER_FAVORIS) ? 6 : -1;
     }
 
     @Override

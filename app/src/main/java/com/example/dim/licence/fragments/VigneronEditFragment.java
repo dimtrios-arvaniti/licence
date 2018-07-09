@@ -33,9 +33,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
-import static com.example.dim.licence.VigneronActivity.V_DIALOG_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CANCEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_TYPE;
 import static com.example.dim.licence.utils.commons.Commons.MAIL_REGEX;
 import static com.example.dim.licence.utils.commons.Commons.TEL_REGEX;
+import static com.example.dim.licence.utils.commons.Commons.VILLE_ID;
+import static com.example.dim.licence.utils.commons.Commons.VILLE_LIBELLE;
+import static com.example.dim.licence.utils.commons.Commons.VILLE_ZIP_CODE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -80,7 +84,9 @@ public class VigneronEditFragment extends Fragment {
 
             if (input.length() > 0) {
                 if (!input.contains("'")) {
-                    villes = input.matches("[0-9]{1,}") ? model.filterVilleByZipCode(input) : model.filterVilleByLibelle(input);
+                    villes = input.matches("[0-9]{1,}") ?
+                            model.filterVilleByZipCode(input) :
+                            model.filterVilleByLibelle(input);
                 }
             }
 
@@ -121,7 +127,8 @@ public class VigneronEditFragment extends Fragment {
         btnCancel = rootView.findViewById(R.id.btnCancel);
 
         model = MasterModel.getInstance(getContext());
-        villes = model.getFirst15Villes();
+        villes = new ArrayList<>();
+        //villes = model.getFirst15Villes();
         //makeFilteredList();
 
        /* et_ville.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -139,12 +146,12 @@ public class VigneronEditFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 HashMap<String, String> sMap = (HashMap<String, String>) adapterView.getAdapter().getItem(i);
-                int id = Integer.valueOf(sMap.get("villeId"));
+                int id = Integer.valueOf(sMap.get(VILLE_ID));
                 ville = model.getVilleById(id);
                /* et_ville.removeTextChangedListener(textWatcher);*/
                 et_ville.setText(ville.getVilleLibelle());
                 Log.e("MainActivity", "OnItemClick Method Working..");
-                Toast.makeText(getContext(), adapterView.getAdapter().getItem(i).toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), adapterView.getAdapter().getItem(i).toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -153,9 +160,10 @@ public class VigneronEditFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Bundle b = new Bundle();
-                b.putString(V_DIALOG_TYPE, "CANCEL");
+                b.putString(DIALOG_TYPE, DIALOG_CANCEL);
                 VigneronDialogs vigneronDialogs = VigneronDialogs.newInstance(b);
-                vigneronDialogs.show(getActivity().getSupportFragmentManager(), "VigneronDialogs");
+                vigneronDialogs.show(getActivity().getSupportFragmentManager(),
+                        DIALOG_CANCEL);
             }
         });
 
@@ -189,15 +197,19 @@ public class VigneronEditFragment extends Fragment {
                 villes) {
             Log.i(ARG_DEBUG, "makeFilteredList: "+ville.toString());
             map = new HashMap<>();
-            map.put("villeId", String.valueOf(ville.getVilleId()));
-            map.put("villeLibelle", ville.getVilleLibelle());
-            map.put("villeZipCode", ville.getVilleZipCode());
+            map.put(VILLE_ID, String.valueOf(ville.getVilleId()));
+            map.put(VILLE_LIBELLE, ville.getVilleLibelle());
+            map.put(VILLE_ZIP_CODE, ville.getVilleZipCode());
             list.add(map);
         }
-
+//        et_ville.getAdapter().getCount();
         et_ville.setAdapter(new SimpleAdapter(getContext(), list, R.layout.autocomplete_list_item,
-                new String[]{"villeLibelle", "villeZipCode"}, new int[]{R.id.ac_li_ville, R.id.ac_li_zip}));
-        et_ville.showDropDown();
+                new String[]{VILLE_LIBELLE, VILLE_ZIP_CODE}, new int[]{R.id.ac_li_ville, R.id.ac_li_zip}));
+        //Log.i(ARG_DEBUG, "makeFilteredList: POP SHOWN : "+et_ville.isPopupShowing());
+        //if ()
+        //if ()
+        //et_ville.showDropDown();
+        Log.i(ARG_DEBUG, "makeFilteredList:----------- itemscount "+et_ville.getAdapter().getCount());
     }
 
 
@@ -372,6 +384,8 @@ public class VigneronEditFragment extends Fragment {
             }
         }
     }
+
+
 
     @Override
     public void onAttach(Context context) {

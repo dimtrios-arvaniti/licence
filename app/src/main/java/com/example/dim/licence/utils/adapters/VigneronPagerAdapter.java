@@ -9,12 +9,10 @@ import com.example.dim.licence.VigneronActivity;
 public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
 
     private VigneronActivity parentActivity;
-
     public VigneronPagerAdapter(VigneronActivity activity, FragmentManager fm) {
         super(fm);
         parentActivity = activity;
     }
-
 
     @Override
     public Fragment getItem(int position) {
@@ -49,7 +47,6 @@ public class VigneronPagerAdapter extends FragmentStatePagerAdapter {
 
         return "";
     }
-
 
     /**
      * @see android.support.v4.view.PagerAdapter#getCount()

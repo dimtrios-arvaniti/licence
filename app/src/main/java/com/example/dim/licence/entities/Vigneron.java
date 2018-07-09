@@ -4,15 +4,16 @@ import android.os.Bundle;
 
 import com.example.dim.licence.utils.interfaces.EntityBundleInterface;
 
-import static com.example.dim.licence.utils.commons.Commons.V_COMMENT;
-import static com.example.dim.licence.utils.commons.Commons.V_DOMAINE;
-import static com.example.dim.licence.utils.commons.Commons.V_FAX;
-import static com.example.dim.licence.utils.commons.Commons.V_GEOLOC;
-import static com.example.dim.licence.utils.commons.Commons.V_ID;
-import static com.example.dim.licence.utils.commons.Commons.V_LABEL;
-import static com.example.dim.licence.utils.commons.Commons.V_MAIL;
-import static com.example.dim.licence.utils.commons.Commons.V_MOBILE;
-import static com.example.dim.licence.utils.commons.Commons.V_TEL;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_COMMENT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_DOMAINE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FAX;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FIXE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_GEOLOC;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_ID;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_LABEL;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_MAIL;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_MOBILE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_TEL;
 
 
 public class Vigneron implements EntityBundleInterface {
@@ -33,18 +34,18 @@ public class Vigneron implements EntityBundleInterface {
 
 
     public Vigneron(Bundle bundle) {
-        this.vigneronId = bundle.getLong(V_ID, 0);
-        this.vigneronLibelle= bundle.getString(V_LABEL, "");
-        this.vigneronDomaine = bundle.getString(V_DOMAINE, "");
-        this.vigneronFixe = bundle.getString(V_TEL, "");
-        this.vigneronMobile = bundle.getString(V_MOBILE, "");
-        this.vigneronMail = bundle.getString(V_MAIL, "");
-        this.vigneronFax = bundle.getString(V_FAX, "");
-        this.vigneronComment = bundle.getString(V_COMMENT, "");
+        vigneronId = bundle.getLong(VIGN_ID, 0);
+        vigneronLibelle= bundle.getString(VIGN_LABEL, "");
+        vigneronDomaine = bundle.getString(VIGN_DOMAINE, "");
+        vigneronFixe = bundle.getString(VIGN_FIXE, "");
+        vigneronMobile = bundle.getString(VIGN_MOBILE, "");
+        vigneronMail = bundle.getString(VIGN_MAIL, "");
+        vigneronFax = bundle.getString(VIGN_FAX, "");
+        vigneronComment = bundle.getString(VIGN_COMMENT, "");
 
         vigneronGeoloc = new Geolocalisation();
-        if (bundle.getBundle(V_GEOLOC) != null) {
-            Geolocalisation geoloc = new Geolocalisation(bundle.getBundle(V_GEOLOC));
+        if (bundle.getBundle(VIGN_GEOLOC) != null) {
+            Geolocalisation geoloc = new Geolocalisation(bundle.getBundle(VIGN_GEOLOC));
             this.vigneronGeoloc = geoloc;
         }
     }
@@ -179,16 +180,16 @@ public class Vigneron implements EntityBundleInterface {
     @Override
     public Bundle entityToBundle() {
         Bundle bundle = new Bundle();
-        bundle.putLong(V_ID, vigneronId);
-        bundle.putString(V_LABEL, vigneronLibelle);
-        bundle.putString(V_DOMAINE, vigneronDomaine);
-        bundle.putString(V_TEL, vigneronFixe);
-        bundle.putString(V_MOBILE, vigneronMobile);
-        bundle.putString(V_MAIL, vigneronMail);
-        bundle.putString(V_FAX, vigneronFax);
-        bundle.putString(V_COMMENT, vigneronComment);
+        bundle.putLong(VIGN_ID, vigneronId);
+        bundle.putString(VIGN_LABEL, vigneronLibelle);
+        bundle.putString(VIGN_DOMAINE, vigneronDomaine);
+        bundle.putString(VIGN_TEL, vigneronFixe);
+        bundle.putString(VIGN_MOBILE, vigneronMobile);
+        bundle.putString(VIGN_MAIL, vigneronMail);
+        bundle.putString(VIGN_FAX, vigneronFax);
+        bundle.putString(VIGN_COMMENT, vigneronComment);
         if (vigneronGeoloc != null) {
-            bundle.putBundle(V_GEOLOC, vigneronGeoloc.entityToBundle());
+            bundle.putBundle(VIGN_GEOLOC, vigneronGeoloc.entityToBundle());
         }
 
         return bundle;

@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import com.example.dim.licence.utils.interfaces.EntityBundleInterface;
 
-import static com.example.dim.licence.utils.commons.Commons.TV_ID;
-import static com.example.dim.licence.utils.commons.Commons.TV_LABEL;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_ID;
+import static com.example.dim.licence.utils.commons.Commons.TVIN_LABEL;
 
 public class TypeVin implements EntityBundleInterface{
 
@@ -16,8 +16,8 @@ public class TypeVin implements EntityBundleInterface{
     }
 
     public TypeVin(Bundle bundle) {
-        this.typeVinId = bundle.getLong(TV_ID);
-        this.typeVinLibelle = bundle.getString(TV_LABEL);
+        this.typeVinId = bundle.getLong(TVIN_ID);
+        this.typeVinLibelle = bundle.getString(TVIN_LABEL);
     }
 
     public Long getTypeVinId() {
@@ -66,8 +66,8 @@ public class TypeVin implements EntityBundleInterface{
     @Override
     public Bundle entityToBundle() {
         Bundle bundle = new Bundle();
-        bundle.putLong(TV_ID, typeVinId);
-        bundle.putString(TV_LABEL, typeVinLibelle);
+        bundle.putLong(TVIN_ID, typeVinId);
+        bundle.putString(TVIN_LABEL, typeVinLibelle);
         return bundle;
     }
 }

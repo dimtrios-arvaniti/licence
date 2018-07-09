@@ -6,9 +6,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dim.licence.fragments.CaveListFragment"
-    android:layout_weight="10"
-    android:orientation="vertical">
+    android:layout_weight="5"
+    android:orientation="vertical"
+    tools:context="com.example.dim.licence.fragments.CaveListFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cave_list"
@@ -16,7 +16,7 @@
         android:layout_height="0dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_weight="9"
+        android:layout_weight="4"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/cave_list_item"/>
 
@@ -27,7 +27,7 @@
         android:background="@color/colorPrimary"
         android:orientation="horizontal">
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/cave_btnFilter"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -38,7 +38,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/cave_btnCreate"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

@@ -61,13 +61,13 @@
             android:name=".VigneronActivity"
             android:label="@string/title_activity_vigneron"
             android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
         <activity
             android:name=".CaveActivity"
             android:label="CaveActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>

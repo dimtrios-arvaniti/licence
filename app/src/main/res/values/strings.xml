@@ -26,6 +26,8 @@
     <string name="filtrer">Filtrer</string>
     <string name="nouveau">Nouveau</string>
     <string name="chercher">chercher</string>
+    <string name="files_perms_off">Impossible d\'accéder aux images de l\'appareil sans la permission</string>
+    <string name="photo_perms_off">Impossible de lancer la camera sans la permission</string>
     <string name="connexion">Connexion</string>
     <string name="creation_de_compte">Creation de compte</string>
     <string name="mot_de_passe">Mot de passe</string>
@@ -50,7 +52,7 @@
     <string name="permission_camera_rationale">L\'accès à la camera est requis pour vous permettre de prendre des photos directement depuis l\'application.</string>
     <string name="permission_net_state_rationale">L\'accès à l\état du réseau est requis pour que vos données puissent êtres synchronisés sur tout vos appareils. Cette permission est nécessaire au bon fonctionnement de l'application !</string>
     <string name="permission_files_rationale">L\'accès à vos fichiers est necessaire pour sauvergarder les photos prises depuis l\'application ainsi que pour vous permettre d'ajouter des photos déjà existantes sur votre appareil.</string>
-
+    <string name="file_app_required">Cette fonctionnalité nécessite un explorateur de fichier</string>
     <string name="cave_image_prendre_photo">Prendre une photo</string>
     <string name="cave_image_choisir_galerie">Choisir dans ma galerie</string>
     <string name="minus_symbol">-</string>
@@ -80,4 +82,4 @@
         <item>PRIX</item>
     </string-array>
 
-   </resources>
+</resources>

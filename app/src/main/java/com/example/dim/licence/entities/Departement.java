@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import com.example.dim.licence.utils.interfaces.EntityBundleInterface;
 
-import static com.example.dim.licence.utils.commons.Commons.D_ID;
-import static com.example.dim.licence.utils.commons.Commons.D_LIBELLE;
-import static com.example.dim.licence.utils.commons.Commons.D_REGION;
+import static com.example.dim.licence.utils.commons.Commons.DEPT_ID;
+import static com.example.dim.licence.utils.commons.Commons.DEPT_LIBELLE;
+import static com.example.dim.licence.utils.commons.Commons.DEPT_REGION;
 
 public class Departement implements EntityBundleInterface {
 
@@ -21,9 +21,9 @@ public class Departement implements EntityBundleInterface {
     public Departement(Bundle bundle) {
         departementRegion = new Region();
         if (bundle !=  null) {
-            departementId = bundle.getLong(D_ID);
-            departementLibelle = bundle.getString(D_LIBELLE);
-            departementRegion = new Region(bundle.getBundle(D_REGION));
+            departementId = bundle.getLong(DEPT_ID);
+            departementLibelle = bundle.getString(DEPT_LIBELLE);
+            departementRegion = new Region(bundle.getBundle(DEPT_REGION));
         }
 
     }
@@ -85,9 +85,9 @@ public class Departement implements EntityBundleInterface {
     @Override
     public Bundle entityToBundle() {
         Bundle bundle = new Bundle();
-        bundle.putLong(D_ID, departementId);
-        bundle.putString(D_LIBELLE, departementLibelle);
-        bundle.putBundle(D_REGION, departementRegion.entityToBundle());
+        bundle.putLong(DEPT_ID, departementId);
+        bundle.putString(DEPT_LIBELLE, departementLibelle);
+        bundle.putBundle(DEPT_REGION, departementRegion.entityToBundle());
         return bundle;
     }
 }

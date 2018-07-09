@@ -16,15 +16,22 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.dim.licence.R;
+import com.example.dim.licence.VigneronActivity;
 import com.example.dim.licence.entities.Vigneron;
+import com.example.dim.licence.utils.adapters.VigneronRecyclerAdapter;
 import com.example.dim.licence.utils.interfaces.CrudFragmentInterface;
 import com.example.dim.licence.utils.uicustoms.ListItemDecoration;
-import com.example.dim.licence.utils.adapters.VigneronRecyclerAdapter;
-import com.example.dim.licence.VigneronActivity;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
-import static com.example.dim.licence.VigneronActivity.V_;
-import static com.example.dim.licence.VigneronActivity.V_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.AUCUN;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_DEPARTEMENT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_DOMAINE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_NOM;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_REGION;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_VILLE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_ZIPCODE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,17 +63,17 @@ public class VigneronListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // be careful this get called every time the fragment is rebuilt by viewPager,
         if (backingList == null) { // do not remove this line
-            filterField = "NONE";
+            filterField = AUCUN;
             filterValue = "";
             backingList = new SparseArray<>();
             filteredList = new SparseArray<>();
 
             // make backing list
-            int count = getArguments().getInt(V_COUNT, -1);
+            int count = getArguments().getInt(VIGN_COUNT, -1);
             if (count != -1) {
                 Vigneron v;
                 for (int i = 0; i < count; i++) {
-                    v = new Vigneron(getArguments().getBundle(V_ + i));
+                    v = new Vigneron(getArguments().getBundle(VIGN_ + i));
                     backingList.put(v.getVigneronId().intValue(), v);
                 }
             }
@@ -82,7 +89,7 @@ public class VigneronListFragment extends Fragment {
         filteredList.clear();
 
         switch (filter) {
-            case "NOM":
+            case VIGN_FILTER_NOM:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronLibelle().toLowerCase().trim().contains(value.toLowerCase().trim())) {
@@ -91,7 +98,7 @@ public class VigneronListFragment extends Fragment {
                 }
                 break;
 
-            case "DOMAINE":
+            case VIGN_FILTER_DOMAINE:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronDomaine().toLowerCase().trim().contains(value.toLowerCase().trim())) {
@@ -100,7 +107,7 @@ public class VigneronListFragment extends Fragment {
                 }
                 break;
 
-            case "DEPARTEMENT":
+            case VIGN_FILTER_DEPARTEMENT:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronGeoloc().getGeolocVille()
@@ -112,7 +119,7 @@ public class VigneronListFragment extends Fragment {
                 }
                 break;
 
-            case "REGION":
+            case VIGN_FILTER_REGION:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronGeoloc().getGeolocVille()
@@ -124,7 +131,7 @@ public class VigneronListFragment extends Fragment {
                 }
                 break;
 
-            case "VILLE":
+            case VIGN_FILTER_VILLE:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronGeoloc().getGeolocVille()
@@ -134,7 +141,7 @@ public class VigneronListFragment extends Fragment {
                 }
                 break;
 
-            case "CODE POSTAL":
+            case VIGN_FILTER_ZIPCODE:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronGeoloc().getGeolocVille().getVilleZipCode()
@@ -242,7 +249,7 @@ public class VigneronListFragment extends Fragment {
         filterField = filter;
         filterValue = value;
 
-        if (filter.equalsIgnoreCase("NONE")) {
+        if (filter.equalsIgnoreCase(AUCUN)) {
             makeFilteredFromBacking();
             Log.i(ARG_DEBUG, "applyFilter: THIS IS NO FILTER !");
         } else {

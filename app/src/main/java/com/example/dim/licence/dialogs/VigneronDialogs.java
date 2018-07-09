@@ -28,17 +28,32 @@ import com.example.dim.licence.entities.Vigneron;
 import com.example.dim.licence.utils.interfaces.CrudDialogsInterface;
 
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
-import static com.example.dim.licence.VigneronActivity.V_AVAILABLE_CONTACT_TYPES;
-import static com.example.dim.licence.VigneronActivity.V_CONTACT_TYPE;
-import static com.example.dim.licence.VigneronActivity.V_DIALOG_TYPE;
-import static com.example.dim.licence.VigneronActivity.V_FILTER_TYPE;
-import static com.example.dim.licence.VigneronActivity.V_SELECTED;
+import static com.example.dim.licence.utils.commons.Commons.AUCUN;
+import static com.example.dim.licence.utils.commons.Commons.AVAILABLE_CONTACT_TYPES;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_FIXE;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_MAIL;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_MOBILE;
+import static com.example.dim.licence.utils.commons.Commons.CONTACT_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CANCEL;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_CONTACT;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_DELETE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_FILTER;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_SAVE;
+import static com.example.dim.licence.utils.commons.Commons.DIALOG_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.FILTER_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_DEPARTEMENT;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_DOMAINE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_NOM;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_REGION;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_VILLE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_FILTER_ZIPCODE;
+import static com.example.dim.licence.utils.commons.Commons.VIGN_SELECTED;
 
 public class VigneronDialogs extends android.support.v4.app.DialogFragment {
 
     private CrudDialogsInterface<Vigneron> activityCallback;
-    private final String[] filterOptions = new String[]{"AUCUN", "NOM", "DOMAINE", "PAYS", "VILLE", "CODE POSTAL"};
-    private final String[] contactOptions = new String[]{"FIXE", "MOBILE", "MAIL"};
+    private final String[] filterOptions = new String[]{AUCUN,VIGN_FILTER_NOM, VIGN_FILTER_DOMAINE, VIGN_FILTER_REGION, VIGN_FILTER_DEPARTEMENT, VIGN_FILTER_VILLE, VIGN_FILTER_ZIPCODE};
+    private final String[] contactOptions = new String[]{CONTACT_FIXE, CONTACT_MOBILE, CONTACT_MAIL};
 
     private String contactSelected;
     private LinearLayout filterSearchLayout; // layout containing filterDialog editText
@@ -87,22 +102,22 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new Builder(new ContextThemeWrapper(getContext(), R.style.AppTheme_Dialog));
-        String dialogType = getArguments().getString(V_DIALOG_TYPE);
+        String dialogType = getArguments().getString(DIALOG_TYPE);
 
         switch (dialogType) {
-            case "FILTER":
+            case DIALOG_FILTER:
                 makeFilterDialog(builder);
                 break;
-            case "CANCEL":
+            case DIALOG_CANCEL:
                 makeCancelDialog(builder);
                 break;
-            case "SAVE":
+            case DIALOG_SAVE:
                 makeSaveDialog(builder);
                 break;
-            case "DELETE":
+            case DIALOG_DELETE:
                 makeDeleteDialog(builder);
                 break;
-            case "CONTACT":
+            case DIALOG_CONTACT:
                 makeContactTypeDialog(builder);
                 break;
             default:
@@ -116,7 +131,7 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
 
     private void makeDeleteDialog(Builder builder) {
         builder.setTitle("SUPPRIMER").setMessage("Etes vous sûr de vouloir supprimer "
-                + getArguments().getString(V_SELECTED)
+                + getArguments().getString(VIGN_SELECTED)
                 + " ? \nLes données seront perdues !")
                 .setNegativeButton("Non", null)
                 .setPositiveButton("Oui", new OnClickListener() {
@@ -134,7 +149,8 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
                 .setPositiveButton("Oui", new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Vigneron v = new Vigneron(getArguments().getBundle(V_SELECTED));
+                        Vigneron v = new Vigneron(getArguments().
+                                getBundle(VIGN_SELECTED));
                         activityCallback.save(v);
                     }
                 });
@@ -161,7 +177,8 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
             initFilterDialog();
         }
 
-        int currentChoiceIndex = getFilterChoiceIndex(getArguments().getString(V_FILTER_TYPE));
+        int currentChoiceIndex = getFilterChoiceIndex(getArguments()
+                .getString(FILTER_TYPE));
 
         builder.setTitle("FILTRER")
                 .setView(filterSearchLayout)
@@ -195,7 +212,8 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
     }
 
     private void makeContactTypeDialog(Builder builder) {
-        final int contactIndex = getContactChoiceIndex(getArguments().getString(V_CONTACT_TYPE));
+        final int contactIndex = getContactChoiceIndex(getArguments()
+                .getString(CONTACT_TYPE));
         if (contactOptionsLayout == null) {
             initContactDialog();
         }
@@ -215,7 +233,7 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
 
     @NonNull
     private void initContactDialog() {
-        boolean types[] = getArguments().getBooleanArray(V_AVAILABLE_CONTACT_TYPES);
+        boolean types[] = getArguments().getBooleanArray(AVAILABLE_CONTACT_TYPES);
 
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         contactOptionsLayout = new LinearLayout(getContext());
@@ -277,18 +295,19 @@ public class VigneronDialogs extends android.support.v4.app.DialogFragment {
     }
 
     private int getFilterChoiceIndex(String currentChoice) {
-        return currentChoice.equalsIgnoreCase("NONE") ? 0 :
-                currentChoice.equalsIgnoreCase("NOM") ? 1 :
-                        currentChoice.equalsIgnoreCase("DOMAINE") ? 2 :
-                                currentChoice.equalsIgnoreCase("PAYS") ? 3 :
-                                        currentChoice.equalsIgnoreCase("VILLE") ? 4 :
-                                                currentChoice.equalsIgnoreCase("CODE POSTAL") ? 5 : -1;
+        return currentChoice.equalsIgnoreCase(AUCUN) ? 0 :
+                currentChoice.equalsIgnoreCase(VIGN_FILTER_NOM) ? 1 :
+                        currentChoice.equalsIgnoreCase(VIGN_FILTER_DOMAINE) ? 2 :
+                                currentChoice.equalsIgnoreCase(VIGN_FILTER_REGION) ? 3 :
+                                        currentChoice.equalsIgnoreCase(VIGN_FILTER_DEPARTEMENT) ? 4 :
+                                                currentChoice.equalsIgnoreCase(VIGN_FILTER_VILLE) ? 5 :
+                                                        currentChoice.equalsIgnoreCase(VIGN_FILTER_ZIPCODE) ? 6 :-1;
     }
 
     private int getContactChoiceIndex(String currentChoice) {
-        return currentChoice.equalsIgnoreCase("FIXE") ? 0 :
-                currentChoice.equalsIgnoreCase("MOBILE") ? 1 :
-                        currentChoice.equalsIgnoreCase("MAIL") ? 2 : -1;
+        return currentChoice.equalsIgnoreCase(CONTACT_FIXE) ? 0 :
+                currentChoice.equalsIgnoreCase(CONTACT_MOBILE) ? 1 :
+                        currentChoice.equalsIgnoreCase(CONTACT_MAIL) ? 2 : -1;
     }
 
     @Override

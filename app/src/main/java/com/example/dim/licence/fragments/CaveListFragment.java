@@ -21,9 +21,16 @@ import com.example.dim.licence.utils.adapters.CaveRecyclerAdapter;
 import com.example.dim.licence.utils.interfaces.CrudFragmentInterface;
 import com.example.dim.licence.utils.uicustoms.ListItemDecoration;
 
-import static com.example.dim.licence.CaveActivity.C_;
-import static com.example.dim.licence.CaveActivity.C_COUNT;
 import static com.example.dim.licence.MainActivity.ARG_DEBUG;
+import static com.example.dim.licence.utils.commons.Commons.AUCUN;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_COUNT;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_ANNEE;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_APPELATION;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_FAVORIS;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_NOM;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_TYPE;
+import static com.example.dim.licence.utils.commons.Commons.CAVE_FILTER_VIGNERON;
 
 public class CaveListFragment extends Fragment {
 
@@ -55,14 +62,14 @@ public class CaveListFragment extends Fragment {
         if (backingList == null) { // do not remove this line
             backingList = new SparseArray<>();
             filteredList = new SparseArray<>();
-            filterField = "NONE";
+            filterField = AUCUN;
             filterValue = "";
             // make backing list
-            int count = getArguments().getInt(C_COUNT, -1);
+            int count = getArguments().getInt(CAVE_COUNT, -1);
             if (count != -1) {
                 Cave v;
                 for (int i = 0; i < count; i++) {
-                    v = new Cave(getArguments().getBundle(C_ + i));
+                    v = new Cave(getArguments().getBundle(CAVE_ + i));
                     backingList.put(v.getCaveId().intValue(), v);
                 }
             }
@@ -84,7 +91,7 @@ public class CaveListFragment extends Fragment {
         filteredList.clear();
 
         switch (filter) {
-            case "NOM":
+            case CAVE_FILTER_NOM:
                 for (int i = 0; i < backingList.size(); i++) {
                    /* int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronLibelle().toLowerCase().trim().contains(value.toLowerCase().trim())) {
@@ -92,7 +99,7 @@ public class CaveListFragment extends Fragment {
                     }*/
                 }
                 break;
-            case "APPELATION":
+            case CAVE_FILTER_APPELATION:
                 for (int i = 0; i < backingList.size(); i++) {
                    /* int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronDomaine().toLowerCase().trim().contains(value.toLowerCase().trim())) {
@@ -100,7 +107,7 @@ public class CaveListFragment extends Fragment {
                     }*/
                 }
                 break;
-            case "ANNEE":
+            case CAVE_FILTER_ANNEE:
                 for (int i = 0; i < backingList.size(); i++) {
                    /* int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronGeoloc().getGeolocPays().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
@@ -108,7 +115,7 @@ public class CaveListFragment extends Fragment {
                     }*/
                 }
                 break;
-            case "TYPE":
+            case CAVE_FILTER_TYPE:
                 for (int i = 0; i < backingList.size(); i++) {
                     /*int key = backingList.keyAt(i);
                     if (backingList.get(key).getVigneronGeoloc().getGeolocVille().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
@@ -116,7 +123,15 @@ public class CaveListFragment extends Fragment {
                     }*/
                 }
                 break;
-            case "VIGNERON":
+            case CAVE_FILTER_VIGNERON:
+                for (int i = 0; i < backingList.size(); i++) {
+                    int key = backingList.keyAt(i);
+                    /*if (backingList.get(key).getVigneronGeoloc().getGeolocCode().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
+                        filteredList.put(key, backingList.get(key));
+                    }*/
+                }
+                break;
+            case CAVE_FILTER_FAVORIS:
                 for (int i = 0; i < backingList.size(); i++) {
                     int key = backingList.keyAt(i);
                     /*if (backingList.get(key).getVigneronGeoloc().getGeolocCode().toLowerCase().trim().startsWith(value.toLowerCase().trim())) {
@@ -225,7 +240,7 @@ public class CaveListFragment extends Fragment {
         filterField = filter;
         filterValue = value;
 
-        if (filter.equalsIgnoreCase("NONE")) {
+        if (filter.equalsIgnoreCase(AUCUN)) {
             makeFilteredFromBacking();
             Log.i(ARG_DEBUG, "applyFilter: THIS IS NO FILTER !");
         } else {
